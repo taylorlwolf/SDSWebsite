@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Taylor Wolfenberger" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>SDS 348 Project 1</title>
+    <meta name="generator" content="Hugo 0.69.2" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1.knit/">SDS 348 Project 1</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              <h2 id="taylor-wolfenberger-tw25848">Taylor Wolfenberger (tw25848)</h2>
+<h1 id="introduction">Introduction</h1>
+<p>The two datasets I have chosen describe various natality measures and infant mortality rates for two races, namely, black and white. The two datasets converge from the years 1960-2012. The first dataset, &lsquo;BWNatality&rsquo;, consists of the variables &ldquo;Year&rdquo;, &ldquo;Race&rdquo;, &ldquo;Live Births&rdquo;, &ldquo;Birth Rate&rdquo;, and &ldquo;Fertility Rate&rdquo;. Fertility rate is defined as the number of births per 1000 women of reproductive age (15-44), and birth rate is the number of live births per 1000 women in the total population per year (without taking particular age groups into account) (Source: 3). The years of data collection range from 1960 to 2018. The second dataset, &lsquo;InfMortality&rsquo;, is comprised of the variables &ldquo;Year&rdquo;, &ldquo;Race&rdquo;, and &ldquo;Infant Mortality Rate&rdquo;. Infant Mortality Rate is the number of deaths under one year of age per 1000 live births in a given year. This dataset&rsquo;s years of data collection range from 1915 to 2013. Both datasets were acquired from the Centers for Disease Control and Prevention, and they were collected by the National Center for Health Statistics (NCHS) (Source: 1,2). The United States requires that all births be accompanied by a birth certificate as documentation, and NCHS utilizes The National Vital Statistics System to publish statistical data from these birth certificates, as publication of birth data is mandated by federal law (Source: 3).</p>
+<p>These datasets interest me in particular because I will be attending medical school this July with hopes of specializing in the field of Women&rsquo;s Health. I have worked in a Neonatal Intensive Care Unit (NICU) as well as in a Women&rsquo;s Health Clinic throughout college, and I have always felt especially connected to women and babies. In addition, I have taken part in research projects that aim to address disparities in reproductive care for women, such as a lack of access to contraception and how sexual health is impacted for disadvantaged groups. Due to these experiences, I am familiar with how drastically natality measures can differ across ethnicity, race, socioeconomic status, etc., and I anticipate that fertility rate and birth rate will be significantly higher for black women compared to white women. Statistically speaking, there are racial disparities that affect factors such as access to healthcare and contraceptive methods, which may put black women at a higher risk of becoming pregnant and/or experiencing complications in childbirth.</p>
+<h1 id="initial-step-loading-datasets--joining">Initial Step: Loading Datasets &amp; Joining</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(tidyverse)
+<span style="color:#a6e22e">library</span>(dplyr)
+<span style="color:#75715e">#Reading in datasets to be used</span>
+InfMortality<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">read.csv</span>(<span style="color:#e6db74">&#34;~/Downloads/InfantMortalityByRace.csv&#34;</span>)
+BWNatality<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">read.csv</span>(<span style="color:#e6db74">&#34;~/Downloads/BWNatality.csv&#34;</span>)
+<span style="color:#75715e">#Performing an inner_join based on Year and Race</span>
+fulldataset<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">inner_join</span>(BWNatality, InfMortality, by<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Year&#34;</span>, <span style="color:#e6db74">&#34;Race&#34;</span>))
+<span style="color:#75715e">#Omitting NAs, just for good measure</span>
+fulldataset<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">inner_join</span>(BWNatality, InfMortality, by<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Year&#34;</span>, <span style="color:#e6db74">&#34;Race&#34;</span>))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">na.omit</span>()
+</code></pre></div><h1 id="1-tidyinguntidying">1. Tidying/Untidying</h1>
+<p>The datasets were already tidy when the project began. Below, I demonstrate use of the pivot_longer and pivot_wider functions on the full project dataset. A majority of the numeric variables in this project are natality measures of some sort; using pivot_longer, I rearranged all of these variables (Live Births, Birth Rate, Ferility Rate, Infant Mortality Rate) to go under one column called &ldquo;Natality Measure.&rdquo; I purposely left out Year and Race from the untidying by specifying only particular columns. All of the values for each of these measures then fell into a second column called &ldquo;Value.&rdquo; I then used pivot_wider to manipulate the data back into its original tidy form, with each &ldquo;Natality Measure&rdquo; variable having its own column. I also use pivot_longer and pivot_wider throughout the project in other sections.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Pivoting the dataset longer by creating a single column called &#34;Natality Measure&#34;</span>
+longdata<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_longer</span>((<span style="color:#ae81ff">3</span><span style="color:#f92672">:</span><span style="color:#ae81ff">6</span>), names_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Natality Measure&#34;</span>, values_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Value&#34;</span>)
+longdata<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">head</span>()
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Pivoting the dataset wider to restore it back to normal (making it tidy again)</span>
+longdata<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_wider</span>(names_from<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Natality Measure&#34;</span>, values_from<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Value&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">head</span>()
+</code></pre></div><!-- raw HTML omitted -->
+<h1 id="2-joining">2. Joining</h1>
+<p>Below, I used an inner_join to merge the two datasets together based on the common variables &ldquo;Year&rdquo; and &ldquo;Race&rdquo;; both datasets contained data for only Black and White races over the years. The dataset &lsquo;BWNatality&rsquo; had 118 rows prior to the join, and &lsquo;InfMortality&rsquo; had 198 rows. The inner_join resulted in 104 rows, so a total of 94 cases were dropped. The dropped cases are the result of the &lsquo;InfMortality&rsquo; data going as far back as the year 1915 for both races, while the &lsquo;BWNatality&rsquo; data was not collected until the year 1960 onward. For the purposes of this project, I wanted all of the years to match up so that there would be no missing data for any variables. This is precisely why I chose to use an inner_join, as I wanted to drop rows in any dataset that did not have a match. If I had used a full_join (for instance), the years 1915-1959 would be lacking data from the &lsquo;BWNatality&rsquo; dataset, resulting in lots of NAs. Despite its advantages, the implication of using the inner_join is that the project analysis may not be as accurate as one would hope, as we are now excluding decades of infant mortality data that are otherwise available.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Performing an inner_join based on Year and Race</span>
+fulldataset<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">inner_join</span>(BWNatality, InfMortality, by<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Year&#34;</span>,<span style="color:#e6db74">&#34;Race&#34;</span>))
+<span style="color:#75715e">#Omitting NAs, just for good measure</span>
+fulldataset<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">inner_join</span>(BWNatality, InfMortality, by<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Year&#34;</span>,<span style="color:#e6db74">&#34;Race&#34;</span>))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">na.omit</span>()
+<span style="color:#75715e">#Finding the number of rows after the join</span>
+<span style="color:#a6e22e">nrow</span>(fulldataset)
+</code></pre></div><pre><code>## [1] 104
+</code></pre><h1 id="3-wrangling">3. Wrangling</h1>
+<h2 id="demonstrating-use-of-the-6-core-dplyr-functions">Demonstrating Use of the 6 Core Dplyr Functions</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">##Mutate - Creating a New Variable, &#34;Infant Deaths,&#34; as a function of Live Births and Infant Mortality Rate. Then arranging by descending number of Infant Deaths to observe how numbers have changed over time</span>
+fulldataset<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">mutate</span>(Infant.Deaths<span style="color:#f92672">=</span>((Live.Births<span style="color:#f92672">/</span><span style="color:#ae81ff">1000</span>)<span style="color:#f92672">*</span>Infant.Mortality.Rate))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">arrange</span>(<span style="color:#a6e22e">desc</span>(Infant.Deaths))
+<span style="color:#a6e22e">head</span>(fulldataset)
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Note: it is interesting to see how the number of infant deaths has decreased over time </span>
+
+<span style="color:#75715e">##Arrange - By descending infant mortality rate, to see which race and year has the highest rates</span>
+fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">arrange</span>(<span style="color:#a6e22e">desc</span>(Infant.Mortality.Rate))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">head</span>()
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">##Filter - For rows where the birth rate is less than the median birth rate; then finding the counts of each Race (to see whose birth rates primarily fall below the median)</span>
+fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">filter</span>(Birth.Rate<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">median</span>(Birth.Rate))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">head</span>()
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">filter</span>(Birth.Rate<span style="color:#f92672">&lt;</span><span style="color:#a6e22e">median</span>(Birth.Rate))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">count</span>(Race)
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">##Summarize - Finding the median fertility rate and median birth rate for both races (also using filter once again here)</span>
+fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">filter</span>(Race<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;Black&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">summarize</span>(<span style="color:#a6e22e">median</span>(Fertility.Rate))
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">filter</span>(Race<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;White&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">summarize</span>(<span style="color:#a6e22e">median</span>(Fertility.Rate))
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">filter</span>(Race<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;Black&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">summarize</span>(<span style="color:#a6e22e">median</span>(Birth.Rate))
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">filter</span>(Race<span style="color:#f92672">==</span><span style="color:#e6db74">&#34;White&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">summarize</span>(<span style="color:#a6e22e">median</span>(Birth.Rate))
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">##Select - Only want to view the &#39;Race&#39; and &#39;Infant Mortality Rate&#39; columns side-by-side; then arranged by descending Infant Mortality Rate</span>
+fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">select</span>(Race,Infant.Mortality.Rate)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">arrange</span>(<span style="color:#a6e22e">desc</span>(Infant.Mortality.Rate))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">head</span>()
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">##Group_By - Grouping by &#39;Race&#39; and then summarizing to find the mean number of live births</span>
+fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">group_by</span>(Race)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">summarize</span>(<span style="color:#a6e22e">mean</span>(Live.Births))
+</code></pre></div><!-- raw HTML omitted -->
+<h2 id="generating-summary-statistics">Generating Summary Statistics</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">###OVERALL summary statistics for each numeric variable: </span>
+<span style="color:#75715e">#Making Natality Measure names look a bit nicer first</span>
+overallstats<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">rename</span>(<span style="color:#e6db74">&#34;Infant Mortality Rate&#34;</span> <span style="color:#f92672">=</span> Infant.Mortality.Rate, <span style="color:#e6db74">&#34;Birth Rate&#34;</span> <span style="color:#f92672">=</span> Birth.Rate, <span style="color:#e6db74">&#34;Infant Deaths&#34;</span> <span style="color:#f92672">=</span> Infant.Deaths, <span style="color:#e6db74">&#34;Live Births&#34;</span> <span style="color:#f92672">=</span> Live.Births, <span style="color:#e6db74">&#34;Fertility Rate&#34;</span> <span style="color:#f92672">=</span> Fertility.Rate)
+<span style="color:#75715e">#Generating summary statistics (mean, median, min, max, and sd) for all numeric variables OVERALL</span>
+overallstats<span style="color:#f92672">&lt;-</span>overallstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">summarize_at</span>(<span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Live Births&#34;</span>,<span style="color:#e6db74">&#34;Birth Rate&#34;</span>, <span style="color:#e6db74">&#34;Fertility Rate&#34;</span>, <span style="color:#e6db74">&#34;Infant Mortality Rate&#34;</span>, <span style="color:#e6db74">&#34;Infant Deaths&#34;</span>), <span style="color:#a6e22e">list</span>(<span style="color:#e6db74">&#34;Mean&#34;</span><span style="color:#f92672">=</span>mean, <span style="color:#e6db74">&#34;Median&#34;</span><span style="color:#f92672">=</span>median, <span style="color:#e6db74">&#34;Minimum&#34;</span><span style="color:#f92672">=</span>min, <span style="color:#e6db74">&#34;Maximum&#34;</span><span style="color:#f92672">=</span>max, <span style="color:#e6db74">&#34;Standard Deviation&#34;</span><span style="color:#f92672">=</span>sd), na.rm<span style="color:#f92672">=</span>T)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">format</span>(scientific<span style="color:#f92672">=</span><span style="color:#66d9ef">FALSE</span>)
+<span style="color:#75715e">#Pivoting longer to put all Natality Measures under one column (and Summary Statistics under one column as well)</span>
+overallstats<span style="color:#f92672">&lt;-</span>overallstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_longer</span>(<span style="color:#a6e22e">contains</span>(<span style="color:#e6db74">&#34;_&#34;</span>))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">separate</span>(name,into<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Natality Measure&#34;</span>,<span style="color:#e6db74">&#34;Summary Statistic&#34;</span>), sep<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;_&#34;</span>)
+<span style="color:#75715e">#Pivoting wider to give each Summary Statistic its own column - this will help with kable tables</span>
+overallstats<span style="color:#f92672">&lt;-</span>overallstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_wider</span>(names_from<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Summary Statistic&#34;</span>, values_from<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;value&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">mutate_if</span>(is.numeric, round, <span style="color:#ae81ff">3</span>)
+
+<span style="color:#75715e">###Summary statistics after GROUPING by Race:</span>
+<span style="color:#75715e">#Making Natality Measure names look a bit nicer</span>
+groupstats<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">rename</span>(<span style="color:#e6db74">&#34;Infant Mortality Rate&#34;</span> <span style="color:#f92672">=</span> Infant.Mortality.Rate, <span style="color:#e6db74">&#34;Birth Rate&#34;</span> <span style="color:#f92672">=</span> Birth.Rate, <span style="color:#e6db74">&#34;Infant Deaths&#34;</span> <span style="color:#f92672">=</span> Infant.Deaths, <span style="color:#e6db74">&#34;Live Births&#34;</span> <span style="color:#f92672">=</span> Live.Births, <span style="color:#e6db74">&#34;Fertility Rate&#34;</span> <span style="color:#f92672">=</span> Fertility.Rate)
+<span style="color:#75715e">#Generating summary statistics (mean, median, min, max, and sd) for numeric variables after grouping by Race</span>
+groupstats<span style="color:#f92672">&lt;-</span>groupstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">group_by</span>(Race)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">summarize_at</span>(<span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Live Births&#34;</span>,<span style="color:#e6db74">&#34;Birth Rate&#34;</span>, <span style="color:#e6db74">&#34;Fertility Rate&#34;</span>, <span style="color:#e6db74">&#34;Infant Mortality Rate&#34;</span>, <span style="color:#e6db74">&#34;Infant Deaths&#34;</span>), <span style="color:#a6e22e">list</span>(<span style="color:#e6db74">&#34;Mean&#34;</span><span style="color:#f92672">=</span>mean, <span style="color:#e6db74">&#34;Median&#34;</span><span style="color:#f92672">=</span>median, <span style="color:#e6db74">&#34;Minimum&#34;</span><span style="color:#f92672">=</span>min, <span style="color:#e6db74">&#34;Maximum&#34;</span><span style="color:#f92672">=</span>max, <span style="color:#e6db74">&#34;Standard Deviation&#34;</span><span style="color:#f92672">=</span>sd), na.rm<span style="color:#f92672">=</span>T)
+<span style="color:#75715e">#Pivoting longer to put all Natality Measures under one column (and Summary Statistics under one column as well)</span>
+groupstats<span style="color:#f92672">&lt;-</span>groupstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_longer</span>(<span style="color:#a6e22e">contains</span>(<span style="color:#e6db74">&#34;_&#34;</span>))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">separate</span>(name,into<span style="color:#f92672">=</span><span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Natality Measure&#34;</span>,<span style="color:#e6db74">&#34;Summary Statistic&#34;</span>), sep<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;_&#34;</span>)
+<span style="color:#75715e">#Pivoting wider to give each Summary Statistic its own column</span>
+groupstats<span style="color:#f92672">&lt;-</span>groupstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_wider</span>(names_from<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Summary Statistic&#34;</span>, values_from<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;value&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">mutate_if</span>(is.numeric, round, <span style="color:#ae81ff">3</span>)
+
+<span style="color:#75715e">###Making Kable tables </span>
+<span style="color:#a6e22e">library</span>(knitr)
+<span style="color:#a6e22e">library</span>(kableExtra)
+<span style="color:#75715e">#Creating table for overall summary statistics </span>
+overallstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">kable</span>(align<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;c&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">kable_styling</span>()
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Creating table for summary statistics after grouping by race; table is colored by Race</span>
+groupstats<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">kable</span>(align<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;c&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">kable_styling</span>(<span style="color:#e6db74">&#34;striped&#34;</span>, full_width <span style="color:#f92672">=</span> F)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">row_spec</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">5</span>, bold <span style="color:#f92672">=</span> T, color <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;white&#34;</span>, background <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#FDB4AD&#34;</span>)<span style="color:#f92672">%&gt;%</span>  <span style="color:#a6e22e">row_spec</span>(<span style="color:#ae81ff">6</span><span style="color:#f92672">:</span><span style="color:#ae81ff">10</span>, bold <span style="color:#f92672">=</span> T, color <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;white&#34;</span>, background <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#B2CDE4&#34;</span>)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">column_spec</span>(<span style="color:#ae81ff">1</span>, bold<span style="color:#f92672">=</span>T, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;black&#34;</span>)
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">###Creating a correlation matrix of all numeric variables</span>
+cormatrix<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span>na.omit<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">select_if</span>(is.numeric)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">select</span>(<span style="color:#f92672">-</span>Year)
+<span style="color:#a6e22e">cor</span>(cormatrix)
+</code></pre></div><pre><code>##                       Live.Births  Birth.Rate Fertility.Rate
+## Live.Births             1.0000000 -0.60401501     -0.3568016
+## Birth.Rate             -0.6040150  1.00000000      0.9276752
+## Fertility.Rate         -0.3568016  0.92767517      1.0000000
+## Infant.Mortality.Rate  -0.5756488  0.93198833      0.9205023
+## Infant.Deaths           0.6017033  0.04976877      0.2811915
+##                       Infant.Mortality.Rate Infant.Deaths
+## Live.Births                      -0.5756488    0.60170332
+## Birth.Rate                        0.9319883    0.04976877
+## Fertility.Rate                    0.9205023    0.28119153
+## Infant.Mortality.Rate             1.0000000    0.14236235
+## Infant.Deaths                     0.1423623    1.00000000
+</code></pre><p>Using &ldquo;mutate&rdquo;, a new variable called &ldquo;Infant.Deaths&rdquo; was created. By definition, Infant Mortality Rate is the number of deaths per 1,000 live births under one year of age. Therefore, in one year, the number of Infant Deaths = (Live.Births/1000) * Infant Mortality Rate. This new &ldquo;Infant.Deaths&rdquo; variable consists of the infants who were considered live births but did not survive to one year of age. The &ldquo;arrange&rdquo; function was used to arrange the data by descending infant mortality rate; it was found that the year 1960 had the greatest infant mortality rate, with the trend being that infant mortality rate has decreased over time. &ldquo;Filter&rdquo; was used to pick out the rows whose birth rate was less than the median birth rate; a large majority of these observations were white women (43/51). &ldquo;Summarize&rdquo; was used to find the median fertility rate and birth rate for each race; both were lower for Whites. &ldquo;Select&rdquo; was utilized to view only the &lsquo;Race&rsquo; and &lsquo;Infant Mortality Rate&rsquo; columns side-by-side; black women had the maximum infant mortality rate. Lastly, &ldquo;Group_by&rdquo; made groups based on &lsquo;Race&rsquo;, and &ldquo;summarize&rdquo; was used in conjunction to find the the mean number of live births based on race. It was discovered that white women had a much higher number of live births on average.</p>
+<p>Regarding the summary statistics:
+The mean, median, minimum, maximum, and standard deviation were calculated for all numeric variables both overall and after grouping by Race. As anticipated, the mean, median, minimum, maximum, and standard deviation of both birth rates and fertility rates are higher for black women as compared to white women. However, white women have nearly 5x as many live births (on average) as compared to black women, which also goes hand-in-hand with a greater possible number of infant deaths. Overall, white women have a lower mean, median, minimum, maximum, and standard deviation for infant mortality rate. Though there are likely many factors that play into this, these disparities could very well be the result of socioeconomic status differences. For instance, geographical proximity to higher-quality hospital facilities for white women might result in lower infant mortality rates as well as a greater likelihood for having a live birth. Both the minimum and maximum infant mortality rates for blacks are two times that of whites. As for the correlation matrix, negative correlations exist between birth rate and number of live births, fertility rate and number of live births, and infant mortality rate and number of live births. All other combinations of variables had positive correlations. Correlation results are discussed more thoroughly in the following section.</p>
+<h1 id="4-visualization">4. Visualization</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#In the Wrangling section of the project (above), I already created an object called &#39;cormatrix&#39; that contains only the numeric variables</span>
+<span style="color:#75715e">###Creating a correlation heatmap of numeric variables - Plot 1</span>
+fulldatasetcor<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">cor</span>(cormatrix)<span style="color:#f92672">%&gt;%</span>as.data.frame<span style="color:#f92672">%&gt;%</span>
+  rownames_to_column<span style="color:#f92672">%&gt;%</span>
+  <span style="color:#a6e22e">pivot_longer</span>(<span style="color:#ae81ff">-1</span>,names_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;name&#34;</span>,values_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;correlation&#34;</span>)
+<span style="color:#a6e22e">head</span>(fulldatasetcor)
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r">fulldatasetcor<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">ggplot</span>(<span style="color:#a6e22e">aes</span>(rowname,name,fill<span style="color:#f92672">=</span>correlation))<span style="color:#f92672">+</span>
+<span style="color:#a6e22e">geom_tile</span>()<span style="color:#f92672">+</span>
+<span style="color:#a6e22e">scale_fill_gradient2</span>(low<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;red&#34;</span>,mid<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;white&#34;</span>,high<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;green&#34;</span>)<span style="color:#f92672">+</span>
+<span style="color:#a6e22e">geom_text</span>(<span style="color:#a6e22e">aes</span>(label<span style="color:#f92672">=</span><span style="color:#a6e22e">round</span>(correlation,<span style="color:#ae81ff">2</span>)),color <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;black&#34;</span>, size <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>)<span style="color:#f92672">+</span> <span style="color:#a6e22e">theme</span>(axis.text.x <span style="color:#f92672">=</span> <span style="color:#a6e22e">element_text</span>(angle <span style="color:#f92672">=</span> <span style="color:#ae81ff">90</span>, hjust<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>))<span style="color:#f92672">+</span><span style="color:#a6e22e">coord_fixed</span>()<span style="color:#f92672">+</span><span style="color:#a6e22e">ggtitle</span>(<span style="color:#e6db74">&#34;Correlation Heatmap of Numeric Variables&#34;</span>)<span style="color:#f92672">+</span><span style="color:#a6e22e">ylab</span>(<span style="color:#e6db74">&#34;Variables&#34;</span>) <span style="color:#f92672">+</span> <span style="color:#a6e22e">xlab</span>(<span style="color:#e6db74">&#34;Variables&#34;</span>)
+</code></pre></div><p><!-- raw HTML omitted -->
+<strong>Plot 1 - Correlation Heatmap of Numeric Variables</strong></p>
+<p>In this correlation heatmap, negative correlations are shown in shades of red, and positive correlations are shown in shades of green. The white squares indicate nearly-neutral values. There are very strong (&gt;0.90) positive correlations between fertility rate and birth rate, infant mortality rate and birth rate, and fertility rate and infant mortality rate. This makes sense, as a higher fertility rate will likely lead to a greater birth rate in turn (higher likelihood of pregnancy = more babies being born)! There is a medium-strength (0.6) positive correlation between live births and infant deaths; since there is a greater number of babies being born, it follows that there is an increased number of infant deaths before 1 year of life as well. There are weak (0.05-0.28) positive correlations between infant deaths and fertility rate, infant deaths and infant mortality rate, and infant deaths and birth rate. In contrast, there are negative correlations between live births and birth rate, fertility rate and live births, and infant mortality rate and live births. Though this is purely speculation, it could be that as birth rate increases, the number of live births decreases, as there may be a shortage of resources or hospital staff to adequately assist at every birth.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">###Plot 2 - Fertility Rate and Birth Rate by Race Over Time</span>
+<span style="color:#75715e">#Selecting only Fertility Rate and Birth Rate variables, grouped by Year and Race - also renaming them to look nicer on the graph</span>
+fertilityandbirth<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">group_by</span>(Year, Race)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">select</span>(Fertility.Rate,Birth.Rate)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">rename</span>(<span style="color:#e6db74">&#34;Fertility Rate&#34;</span> <span style="color:#f92672">=</span> Fertility.Rate, <span style="color:#e6db74">&#34;Birth Rate&#34;</span> <span style="color:#f92672">=</span> Birth.Rate)
+<span style="color:#75715e">#Pivoting longer to put Fertility Rate and Birth Rate under a single column, &#34;Natality Measure&#34;</span>
+fertilityandbirth<span style="color:#f92672">&lt;-</span>fertilityandbirth<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_longer</span>(cols <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">:</span><span style="color:#ae81ff">4</span>, names_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;NatalityMeasure&#34;</span>, values_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Value&#34;</span>)
+<span style="color:#75715e">#Making the ggplot; changing the theme and its color scheme; changing the distribution of tick marks on the x-axis</span>
+<span style="color:#a6e22e">ggplot</span>(fertilityandbirth, <span style="color:#a6e22e">aes</span>(Year, Value, color<span style="color:#f92672">=</span>Race))<span style="color:#f92672">+</span><span style="color:#a6e22e">geom_point</span>(<span style="color:#a6e22e">aes</span>(shape<span style="color:#f92672">=</span>NatalityMeasure))<span style="color:#f92672">+</span><span style="color:#a6e22e">ggtitle</span>(<span style="color:#e6db74">&#34;Fertility Rate and Birth Rate by Race Over Time (1960-2012)&#34;</span>)<span style="color:#f92672">+</span><span style="color:#a6e22e">scale_x_continuous</span>(breaks<span style="color:#f92672">=</span><span style="color:#a6e22e">seq</span>(<span style="color:#ae81ff">1960</span>, <span style="color:#ae81ff">2020</span>, <span style="color:#ae81ff">10</span>))<span style="color:#f92672">+</span><span style="color:#a6e22e">ylab</span>(<span style="color:#e6db74">&#34;Rate (Per 1000 Women)&#34;</span>) <span style="color:#f92672">+</span> <span style="color:#a6e22e">xlab</span>(<span style="color:#e6db74">&#34;Year&#34;</span>)<span style="color:#f92672">+</span><span style="color:#a6e22e">theme_light</span>()<span style="color:#f92672">+</span><span style="color:#a6e22e">scale_color_brewer</span>(palette <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Pastel1&#34;</span>)<span style="color:#f92672">+</span><span style="color:#a6e22e">scale_shape_discrete</span>(name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Natality Measure&#34;</span>, labels <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#34;Birth Rate&#34;</span>, <span style="color:#e6db74">&#34;Fertility Rate&#34;</span>))
+</code></pre></div><p><!-- raw HTML omitted -->
+<strong>Plot 2 - Fertility Rate and Birth Rate by Race Over Time</strong></p>
+<p>This graph depicts changes in birth rate and fertility rate from 1960 to 2012, for both black and white races. The most interesting trend here is that both rates for black and white women seem to be converging more and more over time, as the gap is visibly decreasing. It is encouraging to see this, as it suggests that potentially we are on track towards eradicating racial disparities in reproductive health outcomes. Birth rate has steadily declined since the 1960s for both races, and fertility rate has declined drastically, though it has fluctuated much more throughout the years. It was actually during the 1960s (in the Griswold v. Connecticut case) that the government gave married couples the right to use birth control, and in the 1970s, birth control was legalized for all U.S. citizens (Source: 4). Perhaps this newfound right for women to be in control of their reproductive health explains why we see the starkest decline in both birth rate and fertility rate during this time period, though there are likely several other compounding factors as well.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">###Plot 3 - Bar Plot, Mean Birth Rate and Infant Mortality Rate by Race</span>
+<span style="color:#75715e">#Selecting only Birth Rate and Infant Mortality Rate variables, grouped by Race</span>
+fulldataset2<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">group_by</span>(Race)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">select</span>(Infant.Mortality.Rate,Birth.Rate)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">rename</span>(<span style="color:#e6db74">&#34;Infant Mortality Rate&#34;</span> <span style="color:#f92672">=</span> Infant.Mortality.Rate, <span style="color:#e6db74">&#34;Birth Rate&#34;</span> <span style="color:#f92672">=</span> Birth.Rate)
+<span style="color:#75715e">#Pivoting longer to put Birth Rate and Infant Mortality Rate under a single column, &#34;Natality Measure&#34;</span>
+fulldataset3<span style="color:#f92672">&lt;-</span>fulldataset2<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">pivot_longer</span>(cols <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span><span style="color:#ae81ff">3</span>, names_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;NatalityMeasure&#34;</span>, values_to<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Value&#34;</span>)
+<span style="color:#75715e">#Creating ggplot, taking the MEAN of both variables; changing the theme and color scheme</span>
+<span style="color:#a6e22e">ggplot</span>(fulldataset3, <span style="color:#a6e22e">aes</span>(x<span style="color:#f92672">=</span>NatalityMeasure, y<span style="color:#f92672">=</span>Value, fill<span style="color:#f92672">=</span>Race))<span style="color:#f92672">+</span> <span style="color:#a6e22e">geom_bar</span>(stat<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;summary&#34;</span>,fun.y<span style="color:#f92672">=</span>
+<span style="color:#e6db74">&#34;mean&#34;</span>, position<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;dodge&#34;</span>, width<span style="color:#f92672">=</span><span style="color:#ae81ff">0.8</span>)<span style="color:#f92672">+</span> <span style="color:#a6e22e">ggtitle</span>(<span style="color:#e6db74">&#34;Mean Birth Rate and Infant Mortality Rate by Race&#34;</span>)<span style="color:#f92672">+</span><span style="color:#a6e22e">ylab</span>(<span style="color:#e6db74">&#34;Mean&#34;</span>) <span style="color:#f92672">+</span> <span style="color:#a6e22e">xlab</span>(<span style="color:#e6db74">&#34;Natality Measure&#34;</span>)<span style="color:#f92672">+</span><span style="color:#a6e22e">theme_bw</span>()<span style="color:#f92672">+</span><span style="color:#a6e22e">scale_fill_brewer</span>(palette <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Pastel1&#34;</span>)<span style="color:#f92672">+</span><span style="color:#a6e22e">geom_errorbar</span>(stat<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;summary&#34;</span>,<span style="color:#a6e22e">aes</span>(y<span style="color:#f92672">=</span>Value), fun.data<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;mean_se&#39;</span>,width<span style="color:#f92672">=</span><span style="color:#ae81ff">.8</span>,position<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;dodge&#34;</span>)
+</code></pre></div><p><!-- raw HTML omitted -->
+<strong>Plot 3 - Mean Birth Rate and Infant Mortality Rate by Race</strong></p>
+<p>This graph depicts the differences in mean birth rate and mean infant mortality rate for both black and white races. It is evident that the means of both rates are quite a bit lower for white women. The mean infant mortality rate for white women is about half that of black women, which is surprising considering that there is less of a gap in their birth rates. It is evident that white women have a lesser chance of losing a child in its first year of life, whether that be due to access to resources or other factors. The correlation heatmap (Plot 1) showed a strong positive correlation (0.93) between birth rate and infant mortality rate, so it makes sense that the high birth rate for black women would be matched by a high infant mortality rate as well. Standard error bars are shown as well; it is evident that there is greater variability in the Infant Mortality Rate measure. This bar plot easily enables one to visualize the differences in means, which further depicts racial disparities in reproductive outcomes.</p>
+<h1 id="5-dimensionality-reduction">5. Dimensionality Reduction</h1>
+<h2 id="pam-clustering">PAM Clustering</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(cluster)
+<span style="color:#75715e">#Creating a &#39;clustdata&#39; object that contains only the variables Race, Birth Rate, Fertility Rate, and Infant Mortality Rate</span>
+clustdata<span style="color:#f92672">&lt;-</span>fulldataset<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">select</span>(Race,Birth.Rate,Fertility.Rate,Infant.Mortality.Rate)
+<span style="color:#75715e">#Determining the most ideal number of clusters to use with silhouette width function - The result is k=3</span>
+sil_width<span style="color:#f92672">&lt;-</span><span style="color:#a6e22e">vector</span>()
+<span style="color:#a6e22e">for</span>(i in <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span><span style="color:#ae81ff">10</span>){
+  pam_fit <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">pam</span>(clustdata, k <span style="color:#f92672">=</span> i)
+  sil_width[i] <span style="color:#f92672">&lt;-</span> pam_fit<span style="color:#f92672">$</span>silinfo<span style="color:#f92672">$</span>avg.width
+  }
+<span style="color:#a6e22e">ggplot</span>()<span style="color:#f92672">+</span><span style="color:#a6e22e">geom_line</span>(<span style="color:#a6e22e">aes</span>(x<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">10</span>,y<span style="color:#f92672">=</span>sil_width))<span style="color:#f92672">+</span><span style="color:#a6e22e">scale_x_continuous</span>(name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;k&#34;</span>,breaks<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">:</span><span style="color:#ae81ff">10</span>)
+</code></pre></div><p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Selecting the k=3 points at random to serve as initial centers; scaling numerics</span>
+pam1 <span style="color:#f92672">&lt;-</span> clustdata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">mutate_if</span>(is.numeric, scale) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">pam</span>(k<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>)
+<span style="color:#a6e22e">head</span>(pam1)
+</code></pre></div><pre><code>## $medoids
+##      Race Birth.Rate Fertility.Rate Infant.Mortality.Rate
+## [1,]   NA  1.8665660       1.958343             1.8567629
+## [2,]   NA  0.7721625       0.197497             0.5156930
+## [3,]   NA -0.6384021      -0.709286            -0.6108058
+## 
+## $id.med
+## [1] 43 77 22
+## 
+## $clustering
+##   [1] 1 1 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 1 3 1 3 1 3
+##  [38] 3 3 1 3 1 1 1 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 1 3 3 3 3 2 2 2 2 2 2 2 2 2 2
+##  [75] 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 4 entries ]
+## 
+## $objective
+##     build      swap 
+## 0.7719345 0.6791504 
+## 
+## $isolation
+##  1  2  3 
+## no no no 
+## Levels: no L L*
+## 
+## $clusinfo
+##      size max_diss   av_diss diameter separation
+## [1,]   12 3.266753 1.2190254 4.590333  0.3687929
+## [2,]   31 1.572468 0.7017242 2.183142  0.3687929
+## [3,]   61 1.167642 0.5614736 2.107822  0.3915206
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Saving cluster assignments to a &#39;pamclust&#39; dataset</span>
+pamclust<span style="color:#f92672">&lt;-</span>clustdata <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">mutate</span>(cluster<span style="color:#f92672">=</span><span style="color:#a6e22e">as.factor</span>(pam1<span style="color:#f92672">$</span>clustering))
+<span style="color:#75715e">#Creating the ggplot - depicts the visualization of only 2 variables, Birth Rate and Fertility Rate, but in clusters based on the 3 selected variables</span>
+pamclust <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">ggplot</span>(<span style="color:#a6e22e">aes</span>(Birth.Rate,Fertility.Rate,color<span style="color:#f92672">=</span>cluster, shape<span style="color:#f92672">=</span>Race)) <span style="color:#f92672">+</span> <span style="color:#a6e22e">geom_point</span>()
+</code></pre></div><p><!-- raw HTML omitted -->
+This plot is a bit less informative than the three-dimensional one displayed below, as it depicts the visualization of only 2 variables, Birth Rate and Fertility Rate. However, it is still in clusters based on Birth Rate, Fertility Rate, and Infant Mortality Rate, and it is a bit easier to look at as compared to the 3D plot.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Summarizing clusters; finding each of their means for the 3 variables</span>
+pamclust <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">group_by</span>(cluster) <span style="color:#f92672">%&gt;%</span> <span style="color:#a6e22e">summarize_if</span>(is.numeric,mean,na.rm<span style="color:#f92672">=</span>T)
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">library</span>(plotly)
+<span style="color:#75715e">#Creating three-dimensional plot based on the 3 distinct variables (also changing the symbols based on Race)</span>
+pamclust<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">plot_ly</span>(x<span style="color:#f92672">=</span> <span style="color:#f92672">~</span>Birth.Rate,  y <span style="color:#f92672">=</span> <span style="color:#f92672">~</span>Fertility.Rate, z <span style="color:#f92672">=</span> <span style="color:#f92672">~</span>Infant.Mortality.Rate, color<span style="color:#f92672">=</span> <span style="color:#f92672">~</span>cluster,
+        type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;scatter3d&#34;</span>, mode <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;markers&#34;</span>, symbol <span style="color:#f92672">=</span> <span style="color:#f92672">~</span>Race, symbols <span style="color:#f92672">=</span> <span style="color:#a6e22e">c</span>(<span style="color:#e6db74">&#39;circle&#39;</span>,<span style="color:#e6db74">&#39;x&#39;</span>))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">layout</span>(autosize <span style="color:#f92672">=</span> F, width <span style="color:#f92672">=</span> <span style="color:#ae81ff">800</span>, height <span style="color:#f92672">=</span> <span style="color:#ae81ff">500</span>)
+</code></pre></div><!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Visualizing all pairwise combinations of the 3 variables; colors denote the different clusters, and shapes differ by Race </span>
+<span style="color:#a6e22e">library</span>(GGally)
+<span style="color:#a6e22e">ggpairs</span>(pamclust, columns<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span><span style="color:#f92672">:</span><span style="color:#ae81ff">4</span>, <span style="color:#a6e22e">aes</span>(color<span style="color:#f92672">=</span>cluster, shape<span style="color:#f92672">=</span>Race))
+</code></pre></div><p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Interpreting average silhouette width; result indicates that the structure is reasonable</span>
+<span style="color:#a6e22e">plot</span>(pam1,which<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
+</code></pre></div><p><!-- raw HTML omitted --></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Silhouette widths for each cluster - these widths are also shown in the plot above (on the right side of the plot)</span>
+pam1<span style="color:#f92672">$</span>silinfo<span style="color:#f92672">$</span>clus.avg.widths
+</code></pre></div><pre><code>## [1] 0.3548264 0.5546103 0.6644349
+</code></pre><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Finding the proportions of Black/White Races in each cluster</span>
+clustdata<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">mutate</span>(cluster<span style="color:#f92672">=</span>pam1<span style="color:#f92672">$</span>clustering)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">group_by</span>(cluster)<span style="color:#f92672">%&gt;%</span>
+  <span style="color:#a6e22e">filter</span>(<span style="color:#f92672">!</span><span style="color:#a6e22e">is.na</span>(Race))<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">count</span>(Race)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">mutate</span>(prop<span style="color:#f92672">=</span>n<span style="color:#f92672">/</span><span style="color:#a6e22e">sum</span>(n))<span style="color:#f92672">%&gt;%</span>
+  <span style="color:#a6e22e">pivot_wider</span>(<span style="color:#f92672">-</span>n,names_from<span style="color:#f92672">=</span>Race,values_from<span style="color:#f92672">=</span>prop,values_fill <span style="color:#f92672">=</span> <span style="color:#a6e22e">list</span>(prop<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>))
+</code></pre></div><!-- raw HTML omitted -->
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#75715e">#Proportions of cluster assignment (by Race)</span>
+clustdata<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">mutate</span>(cluster<span style="color:#f92672">=</span>pam1<span style="color:#f92672">$</span>clustering)<span style="color:#f92672">%&gt;%</span>
+  <span style="color:#a6e22e">group_by</span>(Race)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">count</span>(cluster)<span style="color:#f92672">%&gt;%</span><span style="color:#a6e22e">mutate</span>(prop<span style="color:#f92672">=</span>n<span style="color:#f92672">/</span><span style="color:#a6e22e">sum</span>(n))<span style="color:#f92672">%&gt;%</span>
+  <span style="color:#a6e22e">pivot_wider</span>(<span style="color:#f92672">-</span>n,names_from<span style="color:#f92672">=</span>Race,values_from<span style="color:#f92672">=</span>prop,values_fill <span style="color:#f92672">=</span> <span style="color:#a6e22e">list</span>(prop<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>))
+</code></pre></div><!-- raw HTML omitted -->
+<p>Using PAM, or Partioning Around Medoids, I created clusters based on the numeric variables Infant Mortality Rate, Fertility Rate, and Birth Rate. The individual observations were also distinguished by Race. The output resulted in 3 distinct clusters that represent different &ldquo;levels&rdquo; of the three aforementioned numeric variables. More specifically, Cluster 1 consists of outstandingly high birth rates, fertility rates, and infant mortality rates; Cluster 2 is comprised of intermediate rates for all 3 variables, and Cluster 3 consists of all low rates. A silhouette width function was used in order to access how well the points were assigned to their clusters. With an average silhouette width of 0.6, it can be stated that a reasonable structure has been found. Clusters 2 and 3 are relatively cohesive; however, Cluster 1 is a bit spaced out. This is also indicated by the silhouette width for Cluster 1 being 0.355, which is pretty weak compared to Clusters 2 and 3, whose silhouette widths are 0.555 and 0.664, respectively. This represents the fact that there is still a lot of variation among observations in the high birth rate/fertility rate/infant mortality rate cluster.</p>
+<p>All 3 variables are strongly positively correlated with one another (&gt;0.92 for all combinations), and all distinguish the clusters quite well. Interestingly, Cluster 1 is almost entirely comprised of black women, who make up 83.33% of this high birth rate, fertility rate, and infant mortality rate cluster. In contrast, Cluster 3 (with low birth, fertility, and infant mortality rates) is comprised primarily of white women (70.5%). Cluster 2 is intermediate in its rates, and it is composed of 71% black women and 29% white women. Out of all observations for white women, 79.6% lie in Cluster 3, while black women are more evenly spread across all 3 clusters.</p>
+<p>Note: I originally tried to cluster based on ALL numeric variables in the project; however, the clusters were not well-distinguished at all. The output was much more informative when only 3 numeric variables were considered: Birth Rate, Infant Mortality Rate, and Fertility Rate.</p>
+<h1 id="works-cited">Works Cited</h1>
+<p>Important sources that were utilized throughout the project are as follows:</p>
+<p>(1) &lsquo;BWNatality&rsquo; dataset obtained from: <a href="https://data.cdc.gov/NCHS/NCHS-Natality-Measures-for-Females-by-Race-and-His/89yk-m38d/data">https://data.cdc.gov/NCHS/NCHS-Natality-Measures-for-Females-by-Race-and-His/89yk-m38d/data</a></p>
+<p>(2) &lsquo;InfMortality&rsquo; dataset obtained from: <a href="https://data.cdc.gov/NCHS/NCHS-Infant-Mortality-Rates-by-Race-United-States-/ddsk-zebd">https://data.cdc.gov/NCHS/NCHS-Infant-Mortality-Rates-by-Race-United-States-/ddsk-zebd</a></p>
+<p>(3) NCHS information and definitions for natality measures from:
+<a href="https://www.cdc.gov/nchs/nvss/births.htm?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fnchs%2Fbirths.htm">https://www.cdc.gov/nchs/nvss/births.htm?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fnchs%2Fbirths.htm</a></p>
+<p>(4) Information on the history of birth control legalization in the U.S.: <a href="https://www.ourbodiesourselves.org/book-excerpts/health-article/a-brief-history-of-birth-control/">https://www.ourbodiesourselves.org/book-excerpts/health-article/a-brief-history-of-birth-control/</a></p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

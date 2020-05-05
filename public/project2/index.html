@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Taylor Wolfenberger" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>SDS 348 Project 2</title>
+    <meta name="generator" content="Hugo 0.69.2" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project2/">SDS 348 Project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="taylor-wolfenberger-tw25848" class="section level2">
+<h2>Taylor Wolfenberger (tw25848)</h2>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>For this project, I have chosen to utilize the merged dataset that I created in Project 1. The dataset describes various natality measures and infant mortality rates for two races, namely, black and white.
+The variables in the dataset include “Year”, “Race”, “Live Births”, “Birth Rate”, “Fertility Rate”, and “Infant Mortality Rate.” The “Year” variable ranges from 1960-2012; these were the years over which the data was collected. The “Race” variable is limited to black and white races. “Live births” denotes the total number of babies born alive each year. “Fertility rate” is defined as the number of births per 1000 women of reproductive age (15-44), and “birth rate” is the number of live births per 1000 women in the total population per year (without taking particular age groups into account). “Infant Mortality Rate” is the number of deaths under one year of age per 1000 live births in a given year. There are a total of 104 observations in the dataset.</p>
+<pre class="r"><code>library(tidyverse)
+#Loading in the datasets
+InfMortality&lt;-read.csv(&quot;~/Downloads/InfantMortalityByRace.csv&quot;)
+BWNatality&lt;-read.csv(&quot;~/Downloads/BWNatality.csv&quot;)
+#Merging the datasets together, as in Project 1
+fulldataset&lt;-inner_join(BWNatality, InfMortality, by=c(&quot;Year&quot;, &quot;Race&quot;))%&gt;%na.omit()
+
+### MANOVA - Seeing if any numeric variables (-Year) show a mean difference across levels of Race
+man1&lt;-manova(cbind(Live.Births,Birth.Rate,Fertility.Rate,Infant.Mortality.Rate)~Race, data=fulldataset)
+summary(man1)</code></pre>
+<pre><code>##            Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## Race        1 0.99418   4224.4      4     99 &lt; 2.2e-16 ***
+## Residuals 102                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#Since overall MANOVA is significant, follow-up one-way ANOVAs are performed
+summary.aov(man1) #getting univariate ANOVAs from MANOVA object</code></pre>
+<pre><code>##  Response Live.Births :
+##              Df     Sum Sq    Mean Sq F value    Pr(&gt;F)    
+## Race          1 1.5785e+14 1.5785e+14  5196.9 &lt; 2.2e-16 ***
+## Residuals   102 3.0980e+12 3.0373e+10                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Birth.Rate :
+##              Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Race          1  693.19  693.19  67.451 7.045e-13 ***
+## Residuals   102 1048.25   10.28                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Fertility.Rate :
+##              Df  Sum Sq Mean Sq F value   Pr(&gt;F)    
+## Race          1  5612.2  5612.2  18.204 4.45e-05 ***
+## Residuals   102 31446.3   308.3                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response Infant.Mortality.Rate :
+##              Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## Race          1 2890.5 2890.48  48.667 3.114e-10 ***
+## Residuals   102 6058.1   59.39                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#Individual post-hoc t-tests (to determine which groups differ)
+pairwise.t.test(fulldataset$Live.Births, fulldataset$Race, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldataset$Live.Births and fulldataset$Race 
+## 
+##       Black 
+## White &lt;2e-16
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(fulldataset$Birth.Rate, fulldataset$Race, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldataset$Birth.Rate and fulldataset$Race 
+## 
+##       Black
+## White 7e-13
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(fulldataset$Fertility.Rate, fulldataset$Race, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldataset$Fertility.Rate and fulldataset$Race 
+## 
+##       Black  
+## White 4.4e-05
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>pairwise.t.test(fulldataset$Infant.Mortality.Rate, fulldataset$Race, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with pooled SD 
+## 
+## data:  fulldataset$Infant.Mortality.Rate and fulldataset$Race 
+## 
+##       Black  
+## White 3.1e-10
+## 
+## P value adjustment method: none</code></pre>
+<pre class="r"><code>#Calculating the probability of at least one Type I error (9 p-values were given)
+1-(0.95^9)</code></pre>
+<pre><code>## [1] 0.3697506</code></pre>
+<pre class="r"><code>#Finding the Bonferroni-adjusted significance level
+0.05/9</code></pre>
+<pre><code>## [1] 0.005555556</code></pre>
+<pre class="r"><code>### Checking assumptions
+#Testing for multivariate normality of dependent variables
+library(mvtnorm)
+library(ggExtra)
+fulldataset2&lt;-fulldataset%&gt;%mutate_if(is.numeric, scale)
+#Multivariate normality of Infant Mortality Rate + Fertility Rate - already, we fail the multivariate normality test
+ggplot(fulldataset, aes(x = Infant.Mortality.Rate, y = Fertility.Rate))+geom_point(alpha = .5)+geom_density_2d(h=2) + coord_fixed()+facet_wrap(~Race)+ggtitle(&quot;Assessing Multivariate Normality&quot;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Eyeballing homogeneity of covariances - difficult to tell, but they seem quite different
+covmats&lt;-fulldataset%&gt;%group_by(Race)%&gt;%do(covs=cov(.[3:6]))
+for(i in 1:3){print(as.character(covmats$Race[i])); print(covmats$covs[i])}</code></pre>
+<pre><code>## [1] &quot;Black&quot;
+## [[1]]
+##                         Live.Births   Birth.Rate Fertility.Rate
+## Live.Births           2415200865.59 -67787.94449   -385968.6363
+## Birth.Rate                -67787.94     15.06524        78.3550
+## Fertility.Rate           -385968.64     78.35500       443.8366
+## Infant.Mortality.Rate    -264364.32     33.23962       188.7466
+##                       Infant.Mortality.Rate
+## Live.Births                   -264364.32082
+## Birth.Rate                         33.23962
+## Fertility.Rate                    188.74660
+## Infant.Mortality.Rate              85.68940
+## 
+## [1] &quot;White&quot;
+## [[1]]
+##                         Live.Births   Birth.Rate Fertility.Rate
+## Live.Births            5.622028e+10 2.704355e+05   1.674207e+06
+## Birth.Rate             2.704355e+05 5.850007e+00   3.095420e+01
+## Fertility.Rate         1.674207e+06 3.095420e+01   1.829866e+02
+## Infant.Mortality.Rate -4.556147e+04 1.197840e+01   6.578389e+01
+##                       Infant.Mortality.Rate
+## Live.Births                    -45561.46925
+## Birth.Rate                         11.97840
+## Fertility.Rate                     65.78389
+## Infant.Mortality.Rate              35.08165
+## 
+## [1] NA
+## [[1]]
+## NULL</code></pre>
+<p>A MANOVA was performed in order to determine whether any of the variables (Live Births, Birth Rate, Fertility Rate, and/or Infant Mortality Rate) show a mean difference across levels of Race (Black or White). The null hypothesis predicted that the means of the groups would be equal for each variable.</p>
+<p>The overall MANOVA was found to be statistically significant, so univariate ANOVAs were run in order to assess the responses that showed a mean difference across groups. In addition, post-hoc t-tests were run as well in order to determine which groups differed specifically.
+A total of 9 tests were performed above. The probability that at least one Type I Error was committed is 0.3697506. The bonferroni-adjusted significance level was found to be 0.0056. Based on this adjustment, nothing changed, as ALL tests were found to be statistically significant, with p-values much smaller than 0.0056. The implication of this is that Number of Live Births, Birth Rate, Fertility Rate, and Infant Mortality Rate all differ in a statistically significant manner between Black and White races. The means of each variable differ across race.</p>
+<p>MANOVA assumptions include: 1) Random samples, independent observations, 2) Multivariate normality of dependent variables, 3) Homogeneity of within-group covariance matrices, 4) Linear relationships among dependent variables, 5) No extreme univariate or multivariate outliers, and 6) No multicollinearity.</p>
+<p>Even the assumption of random samples is unlikely to be met; though the births are all recorded as separate events, this dataset pulls from ALL recorded birth records from the year 1960 onward, and thus it is not a random sample. In addition, many of the dependent variables are likely correlated with one another (for instance, a higher Fertility Rate likely leads to a higher Birth Rate, etc.), which violates Assumption 4 regarding linear relationships among the variables. Lastly, there are likely to be some strong outliers. For instance, prior to the 1970s, birth control was not legalized for all U.S. citizens (Source 4). In Project 1, it was found that after this time period, there was a sharp decline in both birth rate and fertility rate. Therefore, there are likely to be outliers (with very high birth rates and fertility rates) prior to the legalization of birth control. In terms of formal analysis; I began to assess the assumption of multivariate normality by making a multivariate plot of Infant Mortality Rate vs. Fertility Rate. Even this initial test failed the multivariate normality assumption. In addition, I eyeballed the homogeneity of covariances, and they differed drastically as well.</p>
+<p>Based on the above, I determined that the assumptions for a MANOVA are likely not properly met.</p>
+</div>
+<div id="randomization-test" class="section level1">
+<h1>Randomization Test</h1>
+<pre class="r"><code>### RANDOMIZATION TEST
+#Plot of the distributions of Fertility Rate (by Race)
+ggplot(fulldataset,aes(Fertility.Rate,fill=Race))+geom_histogram(bins=6.5)+facet_wrap(~Race,ncol=2)+theme(legend.position=&quot;none&quot;)+ggtitle(&quot;Distributions of Fertility Rate by Race&quot;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Calculating the actual observed mean difference
+fulldataset%&gt;%group_by(Race)%&gt;%summarize(means=mean(Fertility.Rate))%&gt;%summarize(`mean_diff:`=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean_diff:`
+##          &lt;dbl&gt;
+## 1        -14.7</code></pre>
+<pre class="r"><code>#Performing a permutation (scrambling any association between Fertility Rate and Race)
+set.seed(12345)
+head(perm1&lt;-data.frame(Fertility.Rate=fulldataset$Fertility.Rate,Race=sample(fulldataset$Race)))</code></pre>
+<pre><code>##   Fertility.Rate  Race
+## 1          153.5 Black
+## 2          142.6 White
+## 3          133.2 White
+## 4          124.7 White
+## 5          118.5 White
+## 6          112.7 Black</code></pre>
+<pre class="r"><code>perm1%&gt;%group_by(Race)%&gt;%summarize(means=mean(Fertility.Rate))%&gt;%summarize(`mean_diff:`=diff(means))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `mean_diff:`
+##          &lt;dbl&gt;
+## 1        0.158</code></pre>
+<pre class="r"><code>#Repeat 5000 times 
+set.seed(12345)
+rand_dist&lt;-vector()
+for(i in 1:5000){
+new&lt;-data.frame(Fertility.Rate=sample(fulldataset$Fertility.Rate),Race=fulldataset$Race) 
+rand_dist[i]&lt;-mean(new[new$Race==&quot;Black&quot;,]$Fertility.Rate)-mean(new[new$Race==&quot;White&quot;,]$Fertility.Rate)}
+
+#Finding the mean fertility rate for each race POST-PERMUTATION
+new%&gt;%group_by(Race)%&gt;%summarize(mean(Fertility.Rate))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   Race  `mean(Fertility.Rate)`
+##   &lt;fct&gt;                  &lt;dbl&gt;
+## 1 Black                   79.4
+## 2 White                   77.2</code></pre>
+<pre class="r"><code>#Plot to visualize the distribution and test statistic 
+{hist(rand_dist,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = c(-14.70281,14.70281), col=&quot;red&quot;)}</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-2-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Computing two-tailed p-value
+mean(rand_dist&gt;14.70281 | rand_dist&lt; -14.70281)</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code>#Performing an Independent Samples T-test for comparison
+t.test(data=fulldataset,Fertility.Rate~Race)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  Fertility.Rate by Race
+## t = 4.1982, df = 82.444, p-value = 6.758e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##   7.736394 21.669235
+## sample estimates:
+## mean in group Black mean in group White 
+##            85.88800            71.18519</code></pre>
+<p>Here, a randomization test was performed in order to determine whether or not there is a statistically significant difference in the mean Fertility Rate between women of Black and White races. The null hypothesis is that the true difference in mean Fertility Rate between Black and White women is 0. The alternative hypothesis that there is a statistically significant difference in the mean Fertility Rate of Black and White women.</p>
+<p>A permutation was performed in which I scrambled the association between Race and Fertility Rate. I then repeated this process 5000 times and computed a two-tailed p-value. After performing the permutation, the new mean difference was 0.158. This is much closer to 0 than the original/true mean difference of -14.70281.</p>
+<p>The results of the randomization test indicate a p-value of 0. This corresponds to the probability of observing a mean difference as extreme as the one observed in the original data under this new randomized distribution. There are 0 mean differences that are more extreme than the actual value of +/-14.70281. Since p = 0 is less than p = 0.05, the null hypothesis can be rejected, and it can be stated that there is a significant difference in mean Fertility Rate between Black and White women. If the null hypothesis were true, and there was no mean difference in the Fertility Rates of Black and White women, it would be very rare to obtain a true mean difference as large as the one I computed (+/-14.70281). In the plot that depicts the distribution of mean differences (after the association between Race and Fertility Rate was scrambled), the true mean difference of +/-14.70281 is seen on the plot as a vertical red line. In some iterations of the permutation, the true mean difference is so far off from those generated post-permutation that it cannot even be seen.</p>
+<p>A Welch’s t-test was also run as a basis of comparison. The randomization test does agree with the t-test in that both p-values are &lt; 0.05, thus deeming the difference in means statistically significant &amp; allowing us to reject the null hypothesis. The p-value was slightly different in the parametric t-test; however, both were below 0.05, so the conclusion remains the same.</p>
+</div>
+<div id="linear-regression-model" class="section level1">
+<h1>Linear Regression Model</h1>
+<pre class="r"><code>#Loading packages
+library(lmtest)
+library(sandwich)
+library(ggplot2)
+#First, mean-centering the Fertility Rate variable
+fulldataset$Fertility.Rate.c &lt;- fulldataset$Fertility.Rate-mean(fulldataset$Fertility.Rate, na.rm=T)
+
+### LINEAR REGRESSION, predicting Birth Rate from Fertility Rate and Race (and their interaction)
+fit&lt;-lm(Birth.Rate~Fertility.Rate.c+Race+Fertility.Rate.c:Race, data=fulldataset)
+summary(fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Birth.Rate ~ Fertility.Rate.c + Race + Fertility.Rate.c:Race, 
+##     data = fulldataset)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.93808 -0.75159 -0.06672  0.90754  1.93692 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                18.960265   0.145168 130.609   &lt;2e-16 ***
+## Fertility.Rate.c            0.176540   0.006536  27.009   &lt;2e-16 ***
+## RaceWhite                  -2.623782   0.207529 -12.643   &lt;2e-16 ***
+## Fertility.Rate.c:RaceWhite -0.007379   0.011770  -0.627    0.532    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.9639 on 100 degrees of freedom
+## Multiple R-squared:  0.9466, Adjusted R-squared:  0.945 
+## F-statistic: 591.4 on 3 and 100 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#Plotting the regression using ggplot
+fulldataset%&gt;%ggplot(aes(Fertility.Rate.c,Birth.Rate,color=Race))+geom_point()+geom_smooth(method = &#39;lm&#39;,se=F)+ggtitle(&quot;Linear Relationship Between Birth Rate and Fertility Rate + Race&quot;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#R-squared value(s)
+summary(fit)$r.sq</code></pre>
+<pre><code>## [1] 0.9466425</code></pre>
+<pre class="r"><code>summary(fit)$adj.r.sq</code></pre>
+<pre><code>## [1] 0.9450417</code></pre>
+<pre class="r"><code>#Checking assumptions of linearity, normality, and homoskedasticity
+##Checking homoskedasticity using Breuch-Pagan test (null hypothesis is homoskedasticity) - have to reject the null due to p-value &lt; 0.05. We have heteroskedastic data and thus must use robust SEs
+bptest(fit)</code></pre>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  fit
+## BP = 18.726, df = 3, p-value = 0.0003114</code></pre>
+<pre class="r"><code>#Saving residuals as an object
+resids&lt;-fit$residuals
+##Assessing normality
+ggplot()+geom_histogram(aes(resids),bins=10) #looks relatively normal</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Formally testing normality - null hypothesis is that the true distribution is normal. Since the p-value is &gt; 0.05, we do not reject the null (data is normal)
+ks.test(resids, &quot;pnorm&quot;, mean=0, sd(resids))</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  resids
+## D = 0.089025, p-value = 0.3819
+## alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code>ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids)) #Checking linearity - appears relatively linear</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(fulldataset, aes(Fertility.Rate.c,Birth.Rate))+geom_point(alpha=.3)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Computing robust SEs
+coeftest(fit, vcov = vcovHC(fit))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                              Estimate Std. Error  t value Pr(&gt;|t|)    
+## (Intercept)                18.9602650  0.1809120 104.8038   &lt;2e-16 ***
+## Fertility.Rate.c            0.1765402  0.0064399  27.4134   &lt;2e-16 ***
+## RaceWhite                  -2.6237822  0.2011275 -13.0454   &lt;2e-16 ***
+## Fertility.Rate.c:RaceWhite -0.0073791  0.0080222  -0.9198   0.3599    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>##BOOTSTRAPPED SEs
+#Sampling rows from dataset with replacement
+set.seed(12345)
+boot_dat&lt;- sample_frac(fulldataset, replace=T)
+# repeat 5000 times
+samp_distn&lt;-replicate(5000, {boot_dat &lt;- sample_frac(fulldataset, replace=T) #bootstrapping data
+fit2 &lt;- lm(Birth.Rate~Fertility.Rate.c+Race+Fertility.Rate.c:Race, data=boot_dat) 
+  coef(fit2) #save coefs
+})
+## Estimated SEs
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept) Fertility.Rate.c RaceWhite Fertility.Rate.c:RaceWhite
+## 1   0.1795572        0.0072253 0.1984658                0.008678086</code></pre>
+<p>Full model: Birth Rate = 18.96 + 0.1765(Fertility.Rate.c) - 2.624(RaceWhite) - 0.0074(Fertility.Rate.c:RaceWhite)</p>
+<p>Here, a linear regression model was run in order to predict Birth Rate from Race and Fertility Rate (and their interaction). Fertility Rate was mean-centered first.</p>
+<p>The Intercept indicates that the predicted Birth Rate for a Black woman with an average Fertility Rate is 18.96.</p>
+<p>The Fertility.Rate.c coefficient indicates that for every 1-unit increase in Fertility Rate, Birth Rate goes up by 0.1765 units for Black women (the reference group).</p>
+<p>The RaceWhite coefficient indicates the slope decrease in Birth Rate for White women of an average Fertility Rate, as opposed to the reference group of Black women. For people with an average Fertility Rate, White women have an average/predicted Birth Rate that is 2.624 lower than Black women.</p>
+<p>The Fertility.Rate.c:RaceWhite coefficient indicates that the slope for Fertility Rate on Birth Rate is 0.0074 lower for White women compared to Black women.</p>
+<p>When the assumptions were assessed, it was found that the data was normal (via the appearance of the histogram + the Kolmogorov-Smirnov test, which produced a p-value of 0.3819). Since the p-value was not &lt; 0.05, we could not reject the null hypothesis of normality. The data also appeared relatively linear, which was assessed by eyeballing a plot of Fertility.Rate.c vs. Birth.Rate. However, the data did not pass the assumption of homoskedasticity; the Breusch-Pagan test produced a p-value of 0.0003114, and since this p is &lt; 0.05, we must reject the null of homoskedasticity. We have heteroskedastic data. Thus, robust SEs were computed as well.</p>
+<p>The original SEs are as follows: Intercept SE was 0.145, Fertility Rate SE was 0.006536, RaceWhite SE was 0.207529, and Fertility.Rate.c:RaceWhite SE was 0.011770. After computing robust SEs, the new values were: Intercept SE of 0.181, Fertility Rate SE of 0.0064399, RaceWhite SE of 0.2011275, and Fertility.Rate.c:RaceWhite SE of 0.0080222. As you can see, the SEs are virtually unchanged; however, the interaction model SE has decreased a bit. We aren’t taking much of a penalty (despite having heteroskedastic data) since the SEs are virtually unchanged.</p>
+<p>The results remain the same: everything is significant except for the interaction of Race and Fertility Rate. Both Fertility Rate and Race are significantly associated with Birth Rate (p-values: &lt;2e-16). However, the interaction between Fertility Rate and Race was not deemed statistically significant (p-value: 0.532). According to the R-squared value given by the Linear Regression, my model explains 0.947 (94.7%) of the variation in the outcome. The adjusted R-squared value is slightly different at 0.945; this includes a penalty for each extra explanatory variable.</p>
+<p>With bootstrapped SEs, the Intercept SE was 0.1796, Fertility Rate SE was 0.0072, RaceWhite SE was 0.198, and the Fertility.Rate.c:RaceWhite SE was 0.0087.
+Compared to the original SEs, the bootstrapped SEs for Intercept and Fertility Rate are a bit higher, but the original SEs for RaceWhite and Fertility.Rate.c:RaceWhite are bit higher than the bootstrapped SEs. Compared to the robust SEs, the bootstrapped SEs for Fertility Rate and Fertility.Rate.c:RaceWhite are a bit higher, but the robust SEs for Intercept and RaceWhite are a bit higher than the bootstrapped SEs. Overall though, they are not drastically different at all. Between the original and robust SEs, the p-values for Intercept, Fertility.Rate.c, and RaceWhite did not change at all really; however, the p-value for the Fertility.Rate.c:RaceWhite interaction decreased in the robust SE (from p = 0.532 to 0.3599). This makes sense, as the SE decreased most drastically here. The general trend is that as SEs decrease, the p-values decrease as well.</p>
+</div>
+<div id="logistic-regression" class="section level1">
+<h1>Logistic Regression</h1>
+<pre class="r"><code>#Creating binary categorical variable; where Black = 1 and White = 0
+fulldataset&lt;-fulldataset%&gt;%mutate(y=ifelse(Race==&quot;Black&quot;,1,0))
+
+### LOGISTIC REGRESSION
+set.seed(1234)
+fit3&lt;-glm(y~Infant.Mortality.Rate+Birth.Rate,data=fulldataset,family=binomial(link=&quot;logit&quot;))
+coeftest(fit3)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                        Estimate Std. Error z value  Pr(&gt;|z|)    
+## (Intercept)           -9.489107   2.388235 -3.9733 7.089e-05 ***
+## Infant.Mortality.Rate -0.019330   0.086667 -0.2230  0.823508    
+## Birth.Rate             0.564617   0.201046  2.8084  0.004979 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#Exponentiating coefficients for better interpretation
+exp(coef(fit3))</code></pre>
+<pre><code>##           (Intercept) Infant.Mortality.Rate            Birth.Rate 
+##          7.567161e-05          9.808559e-01          1.758775e+00</code></pre>
+<pre class="r"><code>#Generating probabilities
+fulldataset$prob&lt;-predict(fit3,type=&quot;response&quot;)
+prob&lt;-predict(fit3,type=&quot;response&quot;)
+
+#Confusion matrix
+table(predict=as.numeric(prob&gt;.5),truth=fulldataset$y)%&gt;%addmargins</code></pre>
+<pre><code>##        truth
+## predict   0   1 Sum
+##     0    48  17  65
+##     1     6  33  39
+##     Sum  54  50 104</code></pre>
+<pre class="r"><code>#Computing sensitivity (TPR)
+33/50</code></pre>
+<pre><code>## [1] 0.66</code></pre>
+<pre class="r"><code>#Computing specificity (TNR)
+48/54</code></pre>
+<pre><code>## [1] 0.8888889</code></pre>
+<pre class="r"><code>#Computing accuracy
+(33+48)/104</code></pre>
+<pre><code>## [1] 0.7788462</code></pre>
+<pre class="r"><code>#Computing recall (PPV)
+33/39</code></pre>
+<pre><code>## [1] 0.8461538</code></pre>
+<pre class="r"><code>#Plotting density of log-odds by Race
+data&lt;-fulldataset
+data$y&lt;-as.factor(data$y)
+data$logit&lt;-predict(fit3,type=&quot;link&quot;) #get predicted logit scores (logodds)
+data%&gt;%ggplot()+geom_density(aes(logit,color=Race,fill=Race), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)+xlab(&quot;predictor (logit)&quot;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Making an ROC curve
+library(plotROC)
+ROCplot&lt;-ggplot(fulldataset)+geom_roc(aes(d=y,m=prob), n.cuts=0)
+ROCplot</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Computing AUC from the ROC curve
+calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.8933333</code></pre>
+<pre class="r"><code>#10-fold CV 
+#First, inputting class_diag function...
+class_diag&lt;-function(probs,truth){
+  
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+#End class_diag function
+
+##Begin code for 10-fold CV
+library(boot); library(tidyverse); library(lmtest)
+set.seed(1234)
+k=10
+data1&lt;-fulldataset[sample(nrow(fulldataset)),] #put dataset in random order
+folds&lt;-cut(seq(1:nrow(fulldataset)),breaks=k,labels=F) #create folds
+
+diags&lt;-NULL
+for(i in 1:k){          # FOR EACH OF 10 FOLDS
+train&lt;-data1[folds!=i,] # CREATE TRAINING SET
+test&lt;-data1[folds==i,]  # CREATE TESTING SET
+  
+truth&lt;-test$y
+
+fit3&lt;-glm(y~Infant.Mortality.Rate+Birth.Rate, data=train, family=&quot;binomial&quot;)
+probs&lt;-predict(fit3,newdata = test,type=&quot;response&quot;)  
+diags&lt;-rbind(diags,class_diag(probs,truth)) #CV DIAGNOSTICS FOR EACH FOLD
+}
+
+summarize_all(diags,mean) #AVERAGE THE DIAGNOSTICS ACROSS THE 10 FOLDS</code></pre>
+<pre><code>##    acc     sens      spec       ppv       auc
+## 1 0.77 0.727381 0.8706349 0.8016667 0.9232143</code></pre>
+<p>A logistic regression was performed in order to predict Race (Black (1) or White (0)) from Infant Mortality Rate and Birth Rate.</p>
+<p>The exponentiated intercept coefficient (0.0000757) depicts the predicted odds of the woman being Black when Birth Rate and Infant Mortality Rate = 0.</p>
+<p>The exponentiated Birth Rate coefficient (1.759) indicates that when controlling for Infant Mortality Rate, for every 1 unit increase in Birth Rate, the odds of the woman being Black are multiplied by 1.759.
+The Infant Mortality Rate coefficient (0.981) indicates that when controlling for Birth Rate, for every 1 unit increase in Infant Mortality Rate, the odds of the woman being Black are multiplied by 0.981.
+Per the confusion matrix and logistic regression model, accuracy was 0.779, sensitivity (TPR) was 0.66, specificity (TNR) was 0.889, and recall (PPV) was 0.846. These are the same numbers that were provided by the logistic regression model as well.
+The AUC of the logistic regression was 0.8933. This was considered “Good”, almost “Great,” and indicates that this model predicts pretty well overall. The AUC can be interpreted as the probability that a randomly selected person that is Black has a higher predicted probability than a randomly selected person that is White. This makes sense, as the Race “Black” was assigned 1 in the binary categorical variable, while the Race “White” was assigned 0.</p>
+<p>After the 10-fold CV was performed, the out-of-sample accuracy was 0.77, sensitivity was 0.727, and recall was 0.802. These numbers are not drastically different than those provided by the logistic regression. In addition, the new AUC is 0.923. This indicates that this model is predicting a bit better out-of-sample than the original logistic regression, whose AUC was 0.8933.</p>
+</div>
+<div id="lasso-regression" class="section level1">
+<h1>Lasso Regression</h1>
+<pre class="r"><code>#Turning the data into matrices for LASSO
+x&lt;-fulldataset%&gt;%select(Live.Births,Birth.Rate,Fertility.Rate,Infant.Mortality.Rate)%&gt;%as.matrix
+y&lt;-as.matrix(fulldataset$y)
+
+### LASSO; predicting Race (y, where Black = 1 and White = 0) from Live Births, Birth Rate, Fertility Rate, and Infant Mortality Rate - Result is that only the Live Births variable is retained
+library(glmnet)
+set.seed(1234)
+cv.lasso1&lt;-cv.glmnet(x,y,family=&quot;binomial&quot;)
+lasso1&lt;-glmnet(x,y,family=&quot;binomial&quot;,lambda=cv.lasso1$lambda.1se)
+coef(lasso1)</code></pre>
+<pre><code>## 5 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                                  s0
+## (Intercept)            1.104121e+01
+## Live.Births           -6.369961e-06
+## Birth.Rate             .           
+## Fertility.Rate         .           
+## Infant.Mortality.Rate  .</code></pre>
+<pre class="r"><code>##Begin code for 10-fold CV
+library(boot); library(tidyverse); library(lmtest)
+set.seed(1234)
+k=10
+
+data1&lt;-fulldataset[sample(nrow(fulldataset)),] #put dataset in random order
+folds&lt;-cut(seq(1:nrow(fulldataset)),breaks=k,labels=F) #create folds
+
+diags&lt;-NULL
+for(i in 1:k){          # FOR EACH OF 10 FOLDS
+train&lt;-data1[folds!=i,] # CREATE TRAINING SET
+test&lt;-data1[folds==i,]  # CREATE TESTING SET
+  
+truth&lt;-test$y
+  
+fit&lt;-glm(y~Live.Births, data=train, family=&quot;binomial&quot;)
+probs&lt;-predict(fit,newdata = test,type=&quot;response&quot;)  
+diags&lt;-rbind(diags,class_diag(probs,truth)) #CV DIAGNOSTICS FOR EACH FOLD
+}
+
+summarize_all(diags,mean) #AVERAGE THE DIAGNOSTICS ACROSS THE 10 FOLDS</code></pre>
+<pre><code>##   acc sens spec ppv auc
+## 1   1    1    1   1   1</code></pre>
+<pre class="r"><code>#
+fulldataset%&gt;%group_by(y)%&gt;%summarize(min(Live.Births),max(Live.Births))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##       y `min(Live.Births)` `max(Live.Births)`
+##   &lt;dbl&gt;              &lt;int&gt;              &lt;int&gt;
+## 1     0            2551030            3600864
+## 2     1             507162             684336</code></pre>
+<p>Only the variable ‘Live.Births’ was retained by LASSO. A 10-fold CV was then performed, using only the variable Live Births to predict Race, and the class diagnostics resulted in an output of 1 for all factors (accuracy, sensitivity, specificity, ppv, and AUC all = 1). This model’s out-of-sample accuracy is even better than that of the Logistic Regression, as it is now 1 (as opposed to 0.77 beforehand). To check the validity of this, a dplyr function was run in order to determine the number of Live Births that formed the minimum and maximum cutoffs for the 0 and 1 groups.</p>
+<p>The minimum value for the 0 group is 2551030, while the maximum value for the 1 group is 684336, so there is no overlap between the two groups. As a result of this distinct separation, there are no false positives or false negatives.</p>
+<p>In addition, this model’s out-of-sample AUC is better than that of the logistic regression. The new AUC is 1, meaning this model is predicting perfectly, while the old out-of-sample AUC for the logistic regression was 0.923. The model’s predicting power has gone from ‘great’ to ‘perfect’ essentially!</p>
+</div>
+<div id="works-cited" class="section level1">
+<h1>Works Cited</h1>
+<p>Important sources that were utilized throughout the project are as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>‘BWNatality’ dataset obtained from: <a href="https://data.cdc.gov/NCHS/NCHS-Natality-Measures-for-Females-by-Race-and-His/89yk-m38d/data" class="uri">https://data.cdc.gov/NCHS/NCHS-Natality-Measures-for-Females-by-Race-and-His/89yk-m38d/data</a></p></li>
+<li><p>‘InfMortality’ dataset obtained from: <a href="https://data.cdc.gov/NCHS/NCHS-Infant-Mortality-Rates-by-Race-United-States-/ddsk-zebd" class="uri">https://data.cdc.gov/NCHS/NCHS-Infant-Mortality-Rates-by-Race-United-States-/ddsk-zebd</a></p></li>
+<li><p>NCHS information and definitions for natality measures from:
+<a href="https://www.cdc.gov/nchs/nvss/births.htm?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fnchs%2Fbirths.htm" class="uri">https://www.cdc.gov/nchs/nvss/births.htm?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fnchs%2Fbirths.htm</a></p></li>
+<li><p>Information on the history of birth control legalization in the U.S.: <a href="https://www.ourbodiesourselves.org/book-excerpts/health-article/a-brief-history-of-birth-control/" class="uri">https://www.ourbodiesourselves.org/book-excerpts/health-article/a-brief-history-of-birth-control/</a></p></li>
+</ol>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

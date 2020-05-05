@@ -1,0 +1,761 @@
+---
+title: "SDS 348 Project 1"
+output:
+  html_document:
+    df_print: paged
+---
+
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+
+
+<div id="taylor-wolfenberger-tw25848" class="section level2">
+<h2>Taylor Wolfenberger (tw25848)</h2>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The two datasets I have chosen describe various natality measures and infant mortality rates for two races, namely, black and white. The two datasets converge from the years 1960-2012. The first dataset, ‘BWNatality’, consists of the variables “Year”, “Race”, “Live Births”, “Birth Rate”, and “Fertility Rate”. Fertility rate is defined as the number of births per 1000 women of reproductive age (15-44), and birth rate is the number of live births per 1000 women in the total population per year (without taking particular age groups into account) (Source: 3). The years of data collection range from 1960 to 2018. The second dataset, ‘InfMortality’, is comprised of the variables “Year”, “Race”, and “Infant Mortality Rate”. Infant Mortality Rate is the number of deaths under one year of age per 1000 live births in a given year. This dataset’s years of data collection range from 1915 to 2013. Both datasets were acquired from the Centers for Disease Control and Prevention, and they were collected by the National Center for Health Statistics (NCHS) (Source: 1,2). The United States requires that all births be accompanied by a birth certificate as documentation, and NCHS utilizes The National Vital Statistics System to publish statistical data from these birth certificates, as publication of birth data is mandated by federal law (Source: 3).</p>
+<p>These datasets interest me in particular because I will be attending medical school this July with hopes of specializing in the field of Women’s Health. I have worked in a Neonatal Intensive Care Unit (NICU) as well as in a Women’s Health Clinic throughout college, and I have always felt especially connected to women and babies. In addition, I have taken part in research projects that aim to address disparities in reproductive care for women, such as a lack of access to contraception and how sexual health is impacted for disadvantaged groups. Due to these experiences, I am familiar with how drastically natality measures can differ across ethnicity, race, socioeconomic status, etc., and I anticipate that fertility rate and birth rate will be significantly higher for black women compared to white women. Statistically speaking, there are racial disparities that affect factors such as access to healthcare and contraceptive methods, which may put black women at a higher risk of becoming pregnant and/or experiencing complications in childbirth.</p>
+</div>
+<div id="initial-step-loading-datasets-joining" class="section level1">
+<h1>Initial Step: Loading Datasets &amp; Joining</h1>
+<pre class="r"><code>library(tidyverse)
+library(dplyr)
+#Reading in datasets to be used
+InfMortality&lt;-read.csv(&quot;~/Downloads/InfantMortalityByRace.csv&quot;)
+BWNatality&lt;-read.csv(&quot;~/Downloads/BWNatality.csv&quot;)
+#Performing an inner_join based on Year and Race
+fulldataset&lt;-inner_join(BWNatality, InfMortality, by=c(&quot;Year&quot;, &quot;Race&quot;))
+#Omitting NAs, just for good measure
+fulldataset&lt;-inner_join(BWNatality, InfMortality, by=c(&quot;Year&quot;, &quot;Race&quot;))%&gt;%na.omit()</code></pre>
+</div>
+<div id="tidyinguntidying" class="section level1">
+<h1>1. Tidying/Untidying</h1>
+<p>The datasets were already tidy when the project began. Below, I demonstrate use of the pivot_longer and pivot_wider functions on the full project dataset. A majority of the numeric variables in this project are natality measures of some sort; using pivot_longer, I rearranged all of these variables (Live Births, Birth Rate, Ferility Rate, Infant Mortality Rate) to go under one column called “Natality Measure.” I purposely left out Year and Race from the untidying by specifying only particular columns. All of the values for each of these measures then fell into a second column called “Value.” I then used pivot_wider to manipulate the data back into its original tidy form, with each “Natality Measure” variable having its own column. I also use pivot_longer and pivot_wider throughout the project in other sections.</p>
+<pre class="r"><code>#Pivoting the dataset longer by creating a single column called &quot;Natality Measure&quot;
+longdata&lt;-fulldataset%&gt;%pivot_longer((3:6), names_to=&quot;Natality Measure&quot;, values_to=&quot;Value&quot;)
+longdata%&gt;%head()</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##    Year Race  `Natality Measure`       Value
+##   &lt;int&gt; &lt;chr&gt; &lt;chr&gt;                    &lt;dbl&gt;
+## 1  1960 Black Live.Births           602264  
+## 2  1960 Black Birth.Rate                31.9
+## 3  1960 Black Fertility.Rate           154. 
+## 4  1960 Black Infant.Mortality.Rate     44.3
+## 5  1964 Black Live.Births           607556  
+## 6  1964 Black Birth.Rate                29.5</code></pre>
+<pre class="r"><code>#Pivoting the dataset wider to restore it back to normal (making it tidy again)
+longdata%&gt;%pivot_wider(names_from=&quot;Natality Measure&quot;, values_from=&quot;Value&quot;)%&gt;%head()</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##    Year Race  Live.Births Birth.Rate Fertility.Rate Infant.Mortality.Rate
+##   &lt;int&gt; &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt;          &lt;dbl&gt;                 &lt;dbl&gt;
+## 1  1960 Black      602264       31.9           154.                  44.3
+## 2  1964 Black      607556       29.5           143.                  42.3
+## 3  1965 Black      581126       27.7           133.                  41.7
+## 4  1966 Black      558244       26.2           125.                  40.2
+## 5  1967 Black      543976       25.1           118.                  37.5
+## 6  1968 Black      531152       24.2           113.                  36.2</code></pre>
+</div>
+<div id="joining" class="section level1">
+<h1>2. Joining</h1>
+<p>Below, I used an inner_join to merge the two datasets together based on the common variables “Year” and “Race”; both datasets contained data for only Black and White races over the years. The dataset ‘BWNatality’ had 118 rows prior to the join, and ‘InfMortality’ had 198 rows. The inner_join resulted in 104 rows, so a total of 94 cases were dropped. The dropped cases are the result of the ‘InfMortality’ data going as far back as the year 1915 for both races, while the ‘BWNatality’ data was not collected until the year 1960 onward. For the purposes of this project, I wanted all of the years to match up so that there would be no missing data for any variables. This is precisely why I chose to use an inner_join, as I wanted to drop rows in any dataset that did not have a match. If I had used a full_join (for instance), the years 1915-1959 would be lacking data from the ‘BWNatality’ dataset, resulting in lots of NAs. Despite its advantages, the implication of using the inner_join is that the project analysis may not be as accurate as one would hope, as we are now excluding decades of infant mortality data that are otherwise available.</p>
+<pre class="r"><code>#Performing an inner_join based on Year and Race
+fulldataset&lt;-inner_join(BWNatality, InfMortality, by=c(&quot;Year&quot;,&quot;Race&quot;))
+#Omitting NAs, just for good measure
+fulldataset&lt;-inner_join(BWNatality, InfMortality, by=c(&quot;Year&quot;,&quot;Race&quot;))%&gt;%na.omit()
+#Finding the number of rows after the join
+nrow(fulldataset)</code></pre>
+<pre><code>## [1] 104</code></pre>
+</div>
+<div id="wrangling" class="section level1">
+<h1>3. Wrangling</h1>
+<div id="demonstrating-use-of-the-6-core-dplyr-functions" class="section level2">
+<h2>Demonstrating Use of the 6 Core Dplyr Functions</h2>
+<pre class="r"><code>##Mutate - Creating a New Variable, &quot;Infant Deaths,&quot; as a function of Live Births and Infant Mortality Rate. Then arranging by descending number of Infant Deaths to observe how numbers have changed over time
+fulldataset&lt;-fulldataset%&gt;%mutate(Infant.Deaths=((Live.Births/1000)*Infant.Mortality.Rate))%&gt;%arrange(desc(Infant.Deaths))
+head(fulldataset)</code></pre>
+<pre><code>##   Year  Race Live.Births Birth.Rate Fertility.Rate Infant.Mortality.Rate
+## 1 1960 White     3600744       22.7          113.2                  22.9
+## 2 1961 White     3600864       22.2          112.3                  22.4
+## 3 1962 White     3394068       21.4          107.5                  22.3
+## 4 1963 White     3326344       20.7          103.6                  22.2
+## 5 1964 White     3369160       20.0           99.8                  21.6
+## 6 1965 White     3123860       18.3           91.3                  21.5
+##   Infant.Deaths
+## 1      82457.04
+## 2      80659.35
+## 3      75687.72
+## 4      73844.84
+## 5      72773.86
+## 6      67162.99</code></pre>
+<pre class="r"><code>#Note: it is interesting to see how the number of infant deaths has decreased over time 
+
+##Arrange - By descending infant mortality rate, to see which race and year has the highest rates
+fulldataset%&gt;%arrange(desc(Infant.Mortality.Rate))%&gt;%head()</code></pre>
+<pre><code>##   Year  Race Live.Births Birth.Rate Fertility.Rate Infant.Mortality.Rate
+## 1 1960 Black      602264       31.9          153.5                  44.3
+## 2 1964 Black      607556       29.5          142.6                  42.3
+## 3 1965 Black      581126       27.7          133.2                  41.7
+## 4 1966 Black      558244       26.2          124.7                  40.2
+## 5 1967 Black      543976       25.1          118.5                  37.5
+## 6 1968 Black      531152       24.2          112.7                  36.2
+##   Infant.Deaths
+## 1      26680.30
+## 2      25699.62
+## 3      24232.95
+## 4      22441.41
+## 5      20399.10
+## 6      19227.70</code></pre>
+<pre class="r"><code>##Filter - For rows where the birth rate is less than the median birth rate; then finding the counts of each Race (to see whose birth rates primarily fall below the median)
+fulldataset%&gt;%filter(Birth.Rate&lt;median(Birth.Rate))%&gt;%head()</code></pre>
+<pre><code>##   Year  Race Live.Births Birth.Rate Fertility.Rate Infant.Mortality.Rate
+## 1 1971 White     2919746       16.1           77.3                  17.0
+## 2 1972 White     2655558       14.5           68.9                  16.2
+## 3 1973 White     2551030       13.8           64.9                  15.6
+## 4 1974 White     2575792       13.9           64.2                  14.7
+## 5 1975 White     2551996       13.6           62.5                  14.0
+## 6 1976 White     2567614       13.6           61.5                  13.2
+##   Infant.Deaths
+## 1      49635.68
+## 2      43020.04
+## 3      39796.07
+## 4      37864.14
+## 5      35727.94
+## 6      33892.50</code></pre>
+<pre class="r"><code>fulldataset%&gt;%filter(Birth.Rate&lt;median(Birth.Rate))%&gt;%count(Race)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   Race      n
+##   &lt;chr&gt; &lt;int&gt;
+## 1 Black     8
+## 2 White    43</code></pre>
+<pre class="r"><code>##Summarize - Finding the median fertility rate and median birth rate for both races (also using filter once again here)
+fulldataset%&gt;%filter(Race==&quot;Black&quot;)%&gt;%summarize(median(Fertility.Rate))</code></pre>
+<pre><code>##   median(Fertility.Rate)
+## 1                   80.5</code></pre>
+<pre class="r"><code>fulldataset%&gt;%filter(Race==&quot;White&quot;)%&gt;%summarize(median(Fertility.Rate))</code></pre>
+<pre><code>##   median(Fertility.Rate)
+## 1                  65.05</code></pre>
+<pre class="r"><code>fulldataset%&gt;%filter(Race==&quot;Black&quot;)%&gt;%summarize(median(Birth.Rate))</code></pre>
+<pre><code>##   median(Birth.Rate)
+## 1               20.6</code></pre>
+<pre class="r"><code>fulldataset%&gt;%filter(Race==&quot;White&quot;)%&gt;%summarize(median(Birth.Rate))</code></pre>
+<pre><code>##   median(Birth.Rate)
+## 1               14.5</code></pre>
+<pre class="r"><code>##Select - Only want to view the &#39;Race&#39; and &#39;Infant Mortality Rate&#39; columns side-by-side; then arranged by descending Infant Mortality Rate
+fulldataset%&gt;%select(Race,Infant.Mortality.Rate)%&gt;%arrange(desc(Infant.Mortality.Rate))%&gt;%head()</code></pre>
+<pre><code>##    Race Infant.Mortality.Rate
+## 1 Black                  44.3
+## 2 Black                  42.3
+## 3 Black                  41.7
+## 4 Black                  40.2
+## 5 Black                  37.5
+## 6 Black                  36.2</code></pre>
+<pre class="r"><code>##Group_By - Grouping by &#39;Race&#39; and then summarizing to find the mean number of live births
+fulldataset%&gt;%group_by(Race)%&gt;%summarize(mean(Live.Births))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   Race  `mean(Live.Births)`
+##   &lt;chr&gt;               &lt;dbl&gt;
+## 1 Black             597610.
+## 2 White            3063370.</code></pre>
+</div>
+<div id="generating-summary-statistics" class="section level2">
+<h2>Generating Summary Statistics</h2>
+<pre class="r"><code>###OVERALL summary statistics for each numeric variable: 
+#Making Natality Measure names look a bit nicer first
+overallstats&lt;-fulldataset%&gt;%rename(&quot;Infant Mortality Rate&quot; = Infant.Mortality.Rate, &quot;Birth Rate&quot; = Birth.Rate, &quot;Infant Deaths&quot; = Infant.Deaths, &quot;Live Births&quot; = Live.Births, &quot;Fertility Rate&quot; = Fertility.Rate)
+#Generating summary statistics (mean, median, min, max, and sd) for all numeric variables OVERALL
+overallstats&lt;-overallstats%&gt;%summarize_at(c(&quot;Live Births&quot;,&quot;Birth Rate&quot;, &quot;Fertility Rate&quot;, &quot;Infant Mortality Rate&quot;, &quot;Infant Deaths&quot;), list(&quot;Mean&quot;=mean, &quot;Median&quot;=median, &quot;Minimum&quot;=min, &quot;Maximum&quot;=max, &quot;Standard Deviation&quot;=sd), na.rm=T)%&gt;%format(scientific=FALSE)
+#Pivoting longer to put all Natality Measures under one column (and Summary Statistics under one column as well)
+overallstats&lt;-overallstats%&gt;%pivot_longer(contains(&quot;_&quot;))%&gt;%separate(name,into=c(&quot;Natality Measure&quot;,&quot;Summary Statistic&quot;), sep=&quot;_&quot;)
+#Pivoting wider to give each Summary Statistic its own column - this will help with kable tables
+overallstats&lt;-overallstats%&gt;%pivot_wider(names_from=&quot;Summary Statistic&quot;, values_from=&quot;value&quot;)%&gt;%mutate_if(is.numeric, round, 3)
+
+###Summary statistics after GROUPING by Race:
+#Making Natality Measure names look a bit nicer
+groupstats&lt;-fulldataset%&gt;%rename(&quot;Infant Mortality Rate&quot; = Infant.Mortality.Rate, &quot;Birth Rate&quot; = Birth.Rate, &quot;Infant Deaths&quot; = Infant.Deaths, &quot;Live Births&quot; = Live.Births, &quot;Fertility Rate&quot; = Fertility.Rate)
+#Generating summary statistics (mean, median, min, max, and sd) for numeric variables after grouping by Race
+groupstats&lt;-groupstats%&gt;%group_by(Race)%&gt;%summarize_at(c(&quot;Live Births&quot;,&quot;Birth Rate&quot;, &quot;Fertility Rate&quot;, &quot;Infant Mortality Rate&quot;, &quot;Infant Deaths&quot;), list(&quot;Mean&quot;=mean, &quot;Median&quot;=median, &quot;Minimum&quot;=min, &quot;Maximum&quot;=max, &quot;Standard Deviation&quot;=sd), na.rm=T)
+#Pivoting longer to put all Natality Measures under one column (and Summary Statistics under one column as well)
+groupstats&lt;-groupstats%&gt;%pivot_longer(contains(&quot;_&quot;))%&gt;%separate(name,into=c(&quot;Natality Measure&quot;,&quot;Summary Statistic&quot;), sep=&quot;_&quot;)
+#Pivoting wider to give each Summary Statistic its own column
+groupstats&lt;-groupstats%&gt;%pivot_wider(names_from=&quot;Summary Statistic&quot;, values_from=&quot;value&quot;)%&gt;%mutate_if(is.numeric, round, 3)
+
+###Making Kable tables 
+library(knitr)
+library(kableExtra)
+#Creating table for overall summary statistics 
+overallstats%&gt;%kable(align=&quot;c&quot;)%&gt;%kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+Natality Measure
+</th>
+<th style="text-align:center;">
+Mean
+</th>
+<th style="text-align:center;">
+Median
+</th>
+<th style="text-align:center;">
+Minimum
+</th>
+<th style="text-align:center;">
+Maximum
+</th>
+<th style="text-align:center;">
+Standard Deviation
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Live Births
+</td>
+<td style="text-align:center;">
+1877908
+</td>
+<td style="text-align:center;">
+2559805
+</td>
+<td style="text-align:center;">
+507162
+</td>
+<td style="text-align:center;">
+3600864
+</td>
+<td style="text-align:center;">
+1250023
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Birth Rate
+</td>
+<td style="text-align:center;">
+17.625
+</td>
+<td style="text-align:center;">
+16.3
+</td>
+<td style="text-align:center;">
+12
+</td>
+<td style="text-align:center;">
+31.9
+</td>
+<td style="text-align:center;">
+4.111829
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Fertility Rate
+</td>
+<td style="text-align:center;">
+78.25385
+</td>
+<td style="text-align:center;">
+69.1
+</td>
+<td style="text-align:center;">
+61.5
+</td>
+<td style="text-align:center;">
+153.5
+</td>
+<td style="text-align:center;">
+18.96815
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Infant Mortality Rate
+</td>
+<td style="text-align:center;">
+15.99327
+</td>
+<td style="text-align:center;">
+14.25
+</td>
+<td style="text-align:center;">
+5.1
+</td>
+<td style="text-align:center;">
+44.3
+</td>
+<td style="text-align:center;">
+9.320916
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Infant Deaths
+</td>
+<td style="text-align:center;">
+23391.3
+</td>
+<td style="text-align:center;">
+18379.01
+</td>
+<td style="text-align:center;">
+6911.973
+</td>
+<td style="text-align:center;">
+82457.04
+</td>
+<td style="text-align:center;">
+17640.63
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>#Creating table for summary statistics after grouping by race; table is colored by Race
+groupstats%&gt;%kable(align=&quot;c&quot;)%&gt;%kable_styling(&quot;striped&quot;, full_width = F)%&gt;%row_spec(1:5, bold = T, color = &quot;white&quot;, background = &quot;#FDB4AD&quot;)%&gt;%  row_spec(6:10, bold = T, color = &quot;white&quot;, background = &quot;#B2CDE4&quot;)%&gt;%column_spec(1, bold=T, color=&quot;black&quot;)</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;">
+Race
+</th>
+<th style="text-align:center;">
+Natality Measure
+</th>
+<th style="text-align:center;">
+Mean
+</th>
+<th style="text-align:center;">
+Median
+</th>
+<th style="text-align:center;">
+Minimum
+</th>
+<th style="text-align:center;">
+Maximum
+</th>
+<th style="text-align:center;">
+Standard Deviation
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;font-weight: bold;color: black !important;">
+Black
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+Live Births
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+597610.200
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+599880.00
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+507162.000
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+684336.00
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+49144.693
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;font-weight: bold;color: black !important;">
+Black
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+Birth Rate
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+20.308
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+20.60
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+14.700
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+31.90
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+3.881
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;font-weight: bold;color: black !important;">
+Black
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+Fertility Rate
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+85.888
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+80.50
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+65.100
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+153.50
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+21.067
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;font-weight: bold;color: black !important;">
+Black
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+Infant Mortality Rate
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+21.472
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+18.70
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+10.900
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+44.30
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+9.257
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;font-weight: bold;color: black !important;">
+Black
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+Infant Deaths
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+12572.809
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+11403.54
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+6911.973
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+26680.29
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #FDB4AD !important;">
+4933.372
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;font-weight: bold;color: black !important;">
+White
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+Live Births
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+3063369.519
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+3092160.50
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+2551030.000
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+3600864.00
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+237108.156
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;font-weight: bold;color: black !important;">
+White
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+Birth Rate
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+15.141
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+14.50
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+12.000
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+22.70
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+2.419
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;font-weight: bold;color: black !important;">
+White
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+Fertility Rate
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+71.185
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+65.05
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+61.500
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+113.20
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+13.527
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;font-weight: bold;color: black !important;">
+White
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+Infant Mortality Rate
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+10.920
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+8.65
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+5.100
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+22.90
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+5.923
+</td>
+</tr>
+<tr>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;font-weight: bold;color: black !important;">
+White
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+Infant Deaths
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+33408.412
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+26313.12
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+15227.361
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+82457.04
+</td>
+<td style="text-align:center;font-weight: bold;color: white !important;background-color: #B2CDE4 !important;">
+19225.423
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>###Creating a correlation matrix of all numeric variables
+cormatrix&lt;-fulldataset%&gt;%na.omit%&gt;%select_if(is.numeric)%&gt;%select(-Year)
+cor(cormatrix)</code></pre>
+<pre><code>##                       Live.Births  Birth.Rate Fertility.Rate
+## Live.Births             1.0000000 -0.60401501     -0.3568016
+## Birth.Rate             -0.6040150  1.00000000      0.9276752
+## Fertility.Rate         -0.3568016  0.92767517      1.0000000
+## Infant.Mortality.Rate  -0.5756488  0.93198833      0.9205023
+## Infant.Deaths           0.6017033  0.04976877      0.2811915
+##                       Infant.Mortality.Rate Infant.Deaths
+## Live.Births                      -0.5756488    0.60170332
+## Birth.Rate                        0.9319883    0.04976877
+## Fertility.Rate                    0.9205023    0.28119153
+## Infant.Mortality.Rate             1.0000000    0.14236235
+## Infant.Deaths                     0.1423623    1.00000000</code></pre>
+<p>Using “mutate”, a new variable called “Infant.Deaths” was created. By definition, Infant Mortality Rate is the number of deaths per 1,000 live births under one year of age. Therefore, in one year, the number of Infant Deaths = (Live.Births/1000) * Infant Mortality Rate. This new “Infant.Deaths” variable consists of the infants who were considered live births but did not survive to one year of age. The “arrange” function was used to arrange the data by descending infant mortality rate; it was found that the year 1960 had the greatest infant mortality rate, with the trend being that infant mortality rate has decreased over time. “Filter” was used to pick out the rows whose birth rate was less than the median birth rate; a large majority of these observations were white women (43/51). “Summarize” was used to find the median fertility rate and birth rate for each race; both were lower for Whites. “Select” was utilized to view only the ‘Race’ and ‘Infant Mortality Rate’ columns side-by-side; black women had the maximum infant mortality rate. Lastly, “Group_by” made groups based on ‘Race’, and “summarize” was used in conjunction to find the the mean number of live births based on race. It was discovered that white women had a much higher number of live births on average.</p>
+<p>Regarding the summary statistics:
+The mean, median, minimum, maximum, and standard deviation were calculated for all numeric variables both overall and after grouping by Race. As anticipated, the mean, median, minimum, maximum, and standard deviation of both birth rates and fertility rates are higher for black women as compared to white women. However, white women have nearly 5x as many live births (on average) as compared to black women, which also goes hand-in-hand with a greater possible number of infant deaths. Overall, white women have a lower mean, median, minimum, maximum, and standard deviation for infant mortality rate. Though there are likely many factors that play into this, these disparities could very well be the result of socioeconomic status differences. For instance, geographical proximity to higher-quality hospital facilities for white women might result in lower infant mortality rates as well as a greater likelihood for having a live birth. Both the minimum and maximum infant mortality rates for blacks are two times that of whites. As for the correlation matrix, negative correlations exist between birth rate and number of live births, fertility rate and number of live births, and infant mortality rate and number of live births. All other combinations of variables had positive correlations. Correlation results are discussed more thoroughly in the following section.</p>
+</div>
+</div>
+<div id="visualization" class="section level1">
+<h1>4. Visualization</h1>
+<pre class="r"><code>#In the Wrangling section of the project (above), I already created an object called &#39;cormatrix&#39; that contains only the numeric variables
+###Creating a correlation heatmap of numeric variables - Plot 1
+fulldatasetcor&lt;-cor(cormatrix)%&gt;%as.data.frame%&gt;%
+  rownames_to_column%&gt;%
+  pivot_longer(-1,names_to=&quot;name&quot;,values_to=&quot;correlation&quot;)
+head(fulldatasetcor)</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   rowname     name                  correlation
+##   &lt;chr&gt;       &lt;chr&gt;                       &lt;dbl&gt;
+## 1 Live.Births Live.Births                 1    
+## 2 Live.Births Birth.Rate                 -0.604
+## 3 Live.Births Fertility.Rate             -0.357
+## 4 Live.Births Infant.Mortality.Rate      -0.576
+## 5 Live.Births Infant.Deaths               0.602
+## 6 Birth.Rate  Live.Births                -0.604</code></pre>
+<pre class="r"><code>fulldatasetcor%&gt;%ggplot(aes(rowname,name,fill=correlation))+
+geom_tile()+
+scale_fill_gradient2(low=&quot;red&quot;,mid=&quot;white&quot;,high=&quot;green&quot;)+
+geom_text(aes(label=round(correlation,2)),color = &quot;black&quot;, size = 4)+ theme(axis.text.x = element_text(angle = 90, hjust=1))+coord_fixed()+ggtitle(&quot;Correlation Heatmap of Numeric Variables&quot;)+ylab(&quot;Variables&quot;) + xlab(&quot;Variables&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" />
+<strong>Plot 1 - Correlation Heatmap of Numeric Variables</strong></p>
+<p>In this correlation heatmap, negative correlations are shown in shades of red, and positive correlations are shown in shades of green. The white squares indicate nearly-neutral values. There are very strong (&gt;0.90) positive correlations between fertility rate and birth rate, infant mortality rate and birth rate, and fertility rate and infant mortality rate. This makes sense, as a higher fertility rate will likely lead to a greater birth rate in turn (higher likelihood of pregnancy = more babies being born)! There is a medium-strength (0.6) positive correlation between live births and infant deaths; since there is a greater number of babies being born, it follows that there is an increased number of infant deaths before 1 year of life as well. There are weak (0.05-0.28) positive correlations between infant deaths and fertility rate, infant deaths and infant mortality rate, and infant deaths and birth rate. In contrast, there are negative correlations between live births and birth rate, fertility rate and live births, and infant mortality rate and live births. Though this is purely speculation, it could be that as birth rate increases, the number of live births decreases, as there may be a shortage of resources or hospital staff to adequately assist at every birth.</p>
+<pre class="r"><code>###Plot 2 - Fertility Rate and Birth Rate by Race Over Time
+#Selecting only Fertility Rate and Birth Rate variables, grouped by Year and Race - also renaming them to look nicer on the graph
+fertilityandbirth&lt;-fulldataset%&gt;%group_by(Year, Race)%&gt;%select(Fertility.Rate,Birth.Rate)%&gt;%rename(&quot;Fertility Rate&quot; = Fertility.Rate, &quot;Birth Rate&quot; = Birth.Rate)
+#Pivoting longer to put Fertility Rate and Birth Rate under a single column, &quot;Natality Measure&quot;
+fertilityandbirth&lt;-fertilityandbirth%&gt;%pivot_longer(cols = 3:4, names_to=&quot;NatalityMeasure&quot;, values_to=&quot;Value&quot;)
+#Making the ggplot; changing the theme and its color scheme; changing the distribution of tick marks on the x-axis
+ggplot(fertilityandbirth, aes(Year, Value, color=Race))+geom_point(aes(shape=NatalityMeasure))+ggtitle(&quot;Fertility Rate and Birth Rate by Race Over Time (1960-2012)&quot;)+scale_x_continuous(breaks=seq(1960, 2020, 10))+ylab(&quot;Rate (Per 1000 Women)&quot;) + xlab(&quot;Year&quot;)+theme_light()+scale_color_brewer(palette = &quot;Pastel1&quot;)+scale_shape_discrete(name = &quot;Natality Measure&quot;, labels = c(&quot;Birth Rate&quot;, &quot;Fertility Rate&quot;))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" />
+<strong>Plot 2 - Fertility Rate and Birth Rate by Race Over Time</strong></p>
+<p>This graph depicts changes in birth rate and fertility rate from 1960 to 2012, for both black and white races. The most interesting trend here is that both rates for black and white women seem to be converging more and more over time, as the gap is visibly decreasing. It is encouraging to see this, as it suggests that potentially we are on track towards eradicating racial disparities in reproductive health outcomes. Birth rate has steadily declined since the 1960s for both races, and fertility rate has declined drastically, though it has fluctuated much more throughout the years. It was actually during the 1960s (in the Griswold v. Connecticut case) that the government gave married couples the right to use birth control, and in the 1970s, birth control was legalized for all U.S. citizens (Source: 4). Perhaps this newfound right for women to be in control of their reproductive health explains why we see the starkest decline in both birth rate and fertility rate during this time period, though there are likely several other compounding factors as well.</p>
+<pre class="r"><code>###Plot 3 - Bar Plot, Mean Birth Rate and Infant Mortality Rate by Race
+#Selecting only Birth Rate and Infant Mortality Rate variables, grouped by Race
+fulldataset2&lt;-fulldataset%&gt;%group_by(Race)%&gt;%select(Infant.Mortality.Rate,Birth.Rate)%&gt;%rename(&quot;Infant Mortality Rate&quot; = Infant.Mortality.Rate, &quot;Birth Rate&quot; = Birth.Rate)
+#Pivoting longer to put Birth Rate and Infant Mortality Rate under a single column, &quot;Natality Measure&quot;
+fulldataset3&lt;-fulldataset2%&gt;%pivot_longer(cols = 2:3, names_to=&quot;NatalityMeasure&quot;, values_to=&quot;Value&quot;)
+#Creating ggplot, taking the MEAN of both variables; changing the theme and color scheme
+ggplot(fulldataset3, aes(x=NatalityMeasure, y=Value, fill=Race))+ geom_bar(stat=&quot;summary&quot;,fun.y=
+&quot;mean&quot;, position=&quot;dodge&quot;, width=0.8)+ ggtitle(&quot;Mean Birth Rate and Infant Mortality Rate by Race&quot;)+ylab(&quot;Mean&quot;) + xlab(&quot;Natality Measure&quot;)+theme_bw()+scale_fill_brewer(palette = &quot;Pastel1&quot;)+geom_errorbar(stat=&quot;summary&quot;,aes(y=Value), fun.data=&#39;mean_se&#39;,width=.8,position=&quot;dodge&quot;)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" />
+<strong>Plot 3 - Mean Birth Rate and Infant Mortality Rate by Race</strong></p>
+<p>This graph depicts the differences in mean birth rate and mean infant mortality rate for both black and white races. It is evident that the means of both rates are quite a bit lower for white women. The mean infant mortality rate for white women is about half that of black women, which is surprising considering that there is less of a gap in their birth rates. It is evident that white women have a lesser chance of losing a child in its first year of life, whether that be due to access to resources or other factors. The correlation heatmap (Plot 1) showed a strong positive correlation (0.93) between birth rate and infant mortality rate, so it makes sense that the high birth rate for black women would be matched by a high infant mortality rate as well. Standard error bars are shown as well; it is evident that there is greater variability in the Infant Mortality Rate measure. This bar plot easily enables one to visualize the differences in means, which further depicts racial disparities in reproductive outcomes.</p>
+</div>
+<div id="dimensionality-reduction" class="section level1">
+<h1>5. Dimensionality Reduction</h1>
+<div id="pam-clustering" class="section level2">
+<h2>PAM Clustering</h2>
+<pre class="r"><code>library(cluster)
+#Creating a &#39;clustdata&#39; object that contains only the variables Race, Birth Rate, Fertility Rate, and Infant Mortality Rate
+clustdata&lt;-fulldataset%&gt;%select(Race,Birth.Rate,Fertility.Rate,Infant.Mortality.Rate)
+#Determining the most ideal number of clusters to use with silhouette width function - The result is k=3
+sil_width&lt;-vector()
+for(i in 2:10){
+  pam_fit &lt;- pam(clustdata, k = i)
+  sil_width[i] &lt;- pam_fit$silinfo$avg.width
+  }
+ggplot()+geom_line(aes(x=1:10,y=sil_width))+scale_x_continuous(name=&quot;k&quot;,breaks=1:10)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Selecting the k=3 points at random to serve as initial centers; scaling numerics
+pam1 &lt;- clustdata %&gt;% mutate_if(is.numeric, scale) %&gt;% pam(k=3)
+head(pam1)</code></pre>
+<pre><code>## $medoids
+##      Race Birth.Rate Fertility.Rate Infant.Mortality.Rate
+## [1,]   NA  1.8665660       1.958343             1.8567629
+## [2,]   NA  0.7721625       0.197497             0.5156930
+## [3,]   NA -0.6384021      -0.709286            -0.6108058
+## 
+## $id.med
+## [1] 43 77 22
+## 
+## $clustering
+##   [1] 1 1 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 3 3 3 1 3 1 3 1 3
+##  [38] 3 3 1 3 1 1 1 3 3 3 3 3 3 3 3 3 3 3 3 3 1 3 1 3 3 3 3 2 2 2 2 2 2 2 2 2 2
+##  [75] 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 4 entries ]
+## 
+## $objective
+##     build      swap 
+## 0.7719345 0.6791504 
+## 
+## $isolation
+##  1  2  3 
+## no no no 
+## Levels: no L L*
+## 
+## $clusinfo
+##      size max_diss   av_diss diameter separation
+## [1,]   12 3.266753 1.2190254 4.590333  0.3687929
+## [2,]   31 1.572468 0.7017242 2.183142  0.3687929
+## [3,]   61 1.167642 0.5614736 2.107822  0.3915206</code></pre>
+<pre class="r"><code>#Saving cluster assignments to a &#39;pamclust&#39; dataset
+pamclust&lt;-clustdata %&gt;% mutate(cluster=as.factor(pam1$clustering))
+#Creating the ggplot - depicts the visualization of only 2 variables, Birth Rate and Fertility Rate, but in clusters based on the 3 selected variables
+pamclust %&gt;% ggplot(aes(Birth.Rate,Fertility.Rate,color=cluster, shape=Race)) + geom_point()</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-9-2.png" width="672" style="display: block; margin: auto;" />
+This plot is a bit less informative than the three-dimensional one displayed below, as it depicts the visualization of only 2 variables, Birth Rate and Fertility Rate. However, it is still in clusters based on Birth Rate, Fertility Rate, and Infant Mortality Rate, and it is a bit easier to look at as compared to the 3D plot.</p>
+<pre class="r"><code>#Summarizing clusters; finding each of their means for the 3 variables
+pamclust %&gt;% group_by(cluster) %&gt;% summarize_if(is.numeric,mean,na.rm=T)</code></pre>
+<pre><code>## # A tibble: 3 x 4
+##   cluster Birth.Rate Fertility.Rate Infant.Mortality.Rate
+##   &lt;fct&gt;        &lt;dbl&gt;          &lt;dbl&gt;                 &lt;dbl&gt;
+## 1 1             25.5          121.                  34.7 
+## 2 2             20.2           85.8                 20.8 
+## 3 3             14.8           66.1                  9.86</code></pre>
+<pre class="r"><code>library(plotly)
+#Creating three-dimensional plot based on the 3 distinct variables (also changing the symbols based on Race)
+pamclust%&gt;%plot_ly(x= ~Birth.Rate,  y = ~Fertility.Rate, z = ~Infant.Mortality.Rate, color= ~cluster,
+        type = &quot;scatter3d&quot;, mode = &quot;markers&quot;, symbol = ~Race, symbols = c(&#39;circle&#39;,&#39;x&#39;))%&gt;%layout(autosize = F, width = 800, height = 500)</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"b9d857328b2b":["function () ","plotlyVisDat"]},"cur_data":"b9d857328b2b","attrs":{"b9d857328b2b":{"x":{},"y":{},"z":{},"mode":"markers","color":{},"symbol":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"symbols":["circle","x"],"type":"scatter3d"}},"layout":{"width":800,"height":500,"margin":{"b":40,"l":60,"t":25,"r":10},"autosize":false,"scene":{"xaxis":{"title":"Birth.Rate"},"yaxis":{"title":"Fertility.Rate"},"zaxis":{"title":"Infant.Mortality.Rate"}},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":[31.9,29.5,27.7,26.2,25.1,24.2,25.3,24.4,24.4,22.5],"y":[153.5,142.6,133.2,124.7,118.5,112.7,115.4,112.1,109.7,99.9],"z":[44.3,42.3,41.7,40.2,37.5,36.2,33.3,34.8,30.9,30.3],"mode":"markers","type":"scatter3d","name":"1<br />Black","marker":{"color":"rgba(102,194,165,1)","symbol":"circle","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[22.7,22.2],"y":[113.2,112.3],"z":[22.9,22.4],"mode":"markers","type":"scatter3d","name":"1<br />White","marker":{"color":"rgba(102,194,165,1)","symbol":"x","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"frame":null},{"x":[21.4,20.8,20.7,20.5,21.4,21.3,22,21.3,22.3,22.4,21.8,21.5,20.8,20.7,20.8,21.1,20.2,20.5,20.4,20.1,20.2,19.1],"y":[93.6,89.7,87.9,85.8,88.1,86.7,88.3,84.7,86.2,86.8,84.8,82.6,82,80.9,80.1,82.4,78.7,78.9,78.8,78.2,79.6,75.9],"z":[28.8,27.5,27,26.4,24.4,23.9,22.6,22.2,18.6,18,17.6,18.5,20.8,20.5,18.8,16.8,20,18.9,19,19.2,16.5,15.8],"mode":"markers","type":"scatter3d","name":"2<br />Black","marker":{"color":"rgba(252,141,98,1)","symbol":"circle","line":{"color":"rgba(252,141,98,1)"}},"textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"frame":null},{"x":[21.4,20.7,20,18.3,17.4,16.8,16.6,16.9,17.4],"y":[107.5,103.6,99.8,91.3,86.2,82.8,81.3,82.2,84.1],"z":[22.3,22.2,21.6,21.5,20.6,19.7,19.2,18.4,17.6],"mode":"markers","type":"scatter3d","name":"2<br />White","marker":{"color":"rgba(252,141,98,1)","symbol":"x","line":{"color":"rgba(252,141,98,1)"}},"textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"frame":null},{"x":[17.8,16.7,16.8,17,17.3,17.1,16.7,15.7,16.3,17.1,16.3,16.1,15.8,15.9,15.7,15.1,14.8,14.7],"y":[71,71.7,68.5,70,69.2,69.4,71.4,65.7,70.6,69,67.5,68.5,68.8,67.2,66,66.3,65.5,65.1],"z":[15.1,13.3,14.6,14.1,14.7,14.3,12.9,14.4,12.7,14.2,14,13.3,12.4,13.2,13.5,11.5,11.2,10.9],"mode":"markers","type":"scatter3d","name":"3<br />Black","marker":{"color":"rgba(141,160,203,1)","symbol":"circle","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"frame":null},{"x":[16.1,14.5,13.8,13.9,13.6,13.6,14.1,15.1,14,14.5,15,15.1,14.8,15,14.8,14.8,15,14.9,15.4,15.8,15.3,15,14.6,14.3,14.1,13.9,13.8,13.8,13.8,13.7,13.6,13.6,13.7,13.6,13.9,13.7,13.7,13.5,13,12.5,12.2,12.1,12],"y":[77.3,68.9,64.9,64.2,62.5,61.5,63.2,65.6,61.7,63.4,64.8,64.8,63.4,64.1,63.2,63.1,64.5,63.3,66.4,68.3,66.7,66.1,64.9,64.2,63.6,63.3,63.6,69.4,68.7,62.8,65.1,66.8,66.4,66.5,65.3,64,65,68.3,66.4,64.4,63.4,63,62.7],"z":[17,16.2,15.6,14.7,14,13.2,12.2,10.9,11.9,11.3,10.3,9.9,9.6,9.2,9.3,8.8,8.4,8.5,8.1,7.6,7.3,6.9,6.8,6.6,6.3,6.1,6,5.6,5.6,6,5.8,5.7,5.7,5.7,5.7,5.8,5.7,5.5,5.3,5.2,5.1,5.1,5.1],"mode":"markers","type":"scatter3d","name":"3<br />White","marker":{"color":"rgba(141,160,203,1)","symbol":"x","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>#Visualizing all pairwise combinations of the 3 variables; colors denote the different clusters, and shapes differ by Race 
+library(GGally)
+ggpairs(pamclust, columns=2:4, aes(color=cluster, shape=Race))</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Interpreting average silhouette width; result indicates that the structure is reasonable
+plot(pam1,which=2)</code></pre>
+<p><img src="/project1_files/figure-html/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Silhouette widths for each cluster - these widths are also shown in the plot above (on the right side of the plot)
+pam1$silinfo$clus.avg.widths</code></pre>
+<pre><code>## [1] 0.3548264 0.5546103 0.6644349</code></pre>
+<pre class="r"><code>#Finding the proportions of Black/White Races in each cluster
+clustdata%&gt;%mutate(cluster=pam1$clustering)%&gt;%group_by(cluster)%&gt;%
+  filter(!is.na(Race))%&gt;%count(Race)%&gt;%mutate(prop=n/sum(n))%&gt;%
+  pivot_wider(-n,names_from=Race,values_from=prop,values_fill = list(prop=0))</code></pre>
+<pre><code>## # A tibble: 3 x 3
+## # Groups:   cluster [3]
+##   cluster Black White
+##     &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1       1 0.833 0.167
+## 2       2 0.710 0.290
+## 3       3 0.295 0.705</code></pre>
+<pre class="r"><code>#Proportions of cluster assignment (by Race)
+clustdata%&gt;%mutate(cluster=pam1$clustering)%&gt;%
+  group_by(Race)%&gt;%count(cluster)%&gt;%mutate(prop=n/sum(n))%&gt;%
+  pivot_wider(-n,names_from=Race,values_from=prop,values_fill = list(prop=0))</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   cluster Black  White
+##     &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1       1  0.2  0.0370
+## 2       2  0.44 0.167 
+## 3       3  0.36 0.796</code></pre>
+<p>Using PAM, or Partioning Around Medoids, I created clusters based on the numeric variables Infant Mortality Rate, Fertility Rate, and Birth Rate. The individual observations were also distinguished by Race. The output resulted in 3 distinct clusters that represent different “levels” of the three aforementioned numeric variables. More specifically, Cluster 1 consists of outstandingly high birth rates, fertility rates, and infant mortality rates; Cluster 2 is comprised of intermediate rates for all 3 variables, and Cluster 3 consists of all low rates. A silhouette width function was used in order to access how well the points were assigned to their clusters. With an average silhouette width of 0.6, it can be stated that a reasonable structure has been found. Clusters 2 and 3 are relatively cohesive; however, Cluster 1 is a bit spaced out. This is also indicated by the silhouette width for Cluster 1 being 0.355, which is pretty weak compared to Clusters 2 and 3, whose silhouette widths are 0.555 and 0.664, respectively. This represents the fact that there is still a lot of variation among observations in the high birth rate/fertility rate/infant mortality rate cluster.</p>
+<p>All 3 variables are strongly positively correlated with one another (&gt;0.92 for all combinations), and all distinguish the clusters quite well. Interestingly, Cluster 1 is almost entirely comprised of black women, who make up 83.33% of this high birth rate, fertility rate, and infant mortality rate cluster. In contrast, Cluster 3 (with low birth, fertility, and infant mortality rates) is comprised primarily of white women (70.5%). Cluster 2 is intermediate in its rates, and it is composed of 71% black women and 29% white women. Out of all observations for white women, 79.6% lie in Cluster 3, while black women are more evenly spread across all 3 clusters.</p>
+<p>Note: I originally tried to cluster based on ALL numeric variables in the project; however, the clusters were not well-distinguished at all. The output was much more informative when only 3 numeric variables were considered: Birth Rate, Infant Mortality Rate, and Fertility Rate.</p>
+</div>
+</div>
+<div id="works-cited" class="section level1">
+<h1>Works Cited</h1>
+<p>Important sources that were utilized throughout the project are as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>‘BWNatality’ dataset obtained from: <a href="https://data.cdc.gov/NCHS/NCHS-Natality-Measures-for-Females-by-Race-and-His/89yk-m38d/data" class="uri">https://data.cdc.gov/NCHS/NCHS-Natality-Measures-for-Females-by-Race-and-His/89yk-m38d/data</a></p></li>
+<li><p>‘InfMortality’ dataset obtained from: <a href="https://data.cdc.gov/NCHS/NCHS-Infant-Mortality-Rates-by-Race-United-States-/ddsk-zebd" class="uri">https://data.cdc.gov/NCHS/NCHS-Infant-Mortality-Rates-by-Race-United-States-/ddsk-zebd</a></p></li>
+<li><p>NCHS information and definitions for natality measures from:
+<a href="https://www.cdc.gov/nchs/nvss/births.htm?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fnchs%2Fbirths.htm" class="uri">https://www.cdc.gov/nchs/nvss/births.htm?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fnchs%2Fbirths.htm</a></p></li>
+<li><p>Information on the history of birth control legalization in the U.S.: <a href="https://www.ourbodiesourselves.org/book-excerpts/health-article/a-brief-history-of-birth-control/" class="uri">https://www.ourbodiesourselves.org/book-excerpts/health-article/a-brief-history-of-birth-control/</a></p></li>
+</ol>
+</div>
