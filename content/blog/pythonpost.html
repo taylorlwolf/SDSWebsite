@@ -1,23 +1,36 @@
 ---
-title: "Python"
+title: "Using Python and R Together"
 author: "Taylor Wolfenberger"
 date: "2020-05-06"
 ---
 
 
 
-<div id="python" class="section level1">
-<h1>Python</h1>
-<p>In this blog post, I will demonstrate the ways in which Python and R can be used together. Specifically, this post will make you glad that people cannot hear your thoughts out loud. Ever wish that you could hear other peoples’ thoughts, though? Using the Reticulate package, you can!</p>
+<div id="using-python-and-r-together" class="section level1">
+<h1>Using Python and R Together</h1>
+<p>In this blog post, I will demonstrate the ways in which Python and R can be used communicate with each other.</p>
+<p>Ever wish that you could hear other peoples’ thoughts, though? Using the Reticulate package, you can! In this case, the R text is what you are saying audibly, and Python contains your innermost thoughts.</p>
 <p><img src="/blog/pythonpost_files/thoughts.png" /></p>
+<p>So, this is what you are probably saying out loud…</p>
 <pre class="r"><code>#R code chunk
 library(reticulate)
-speech&lt;- &quot;I love your dress&quot;</code></pre>
+speech&lt;- &quot;I love your dress!&quot;
+speech2&lt;- &quot;Where did you get it?&quot;
+speech3&lt;- &quot;And your dog is just the cutest!&quot;</code></pre>
+<p>And this is probably what you’re thinking to yourself…</p>
 <pre class="python"><code>#Python code chunk
-thought=&quot;(lowkey it&#39;s hideous)!&quot;
-print(r.speech,thought)
-## I love your dress (lowkey it&#39;s hideous)!</code></pre>
+thought=&quot;(lowkey it&#39;s hideous!)&quot;
+print(thought)
+## (lowkey it&#39;s hideous!)
+thought2=&quot;(from your grandmother&#39;s closet?)&quot;
+thought3=&quot;(he looks like a drowned rat.)&quot;</code></pre>
+<p>Using Reticulate, you can say your thoughts out loud!</p>
 <pre class="r"><code>#R code chunk
 cat(c(speech,py$thought))
-## I love your dress (lowkey it&#39;s hideous)!</code></pre>
+## I love your dress! (lowkey it&#39;s hideous!)
+cat(c(speech2,py$thought2))
+## Where did you get it? (from your grandmother&#39;s closet?)
+cat(c(speech3,py$thought3))
+## And your dog is just the cutest! (he looks like a drowned rat.)</code></pre>
+<p>Now, aren’t you glad that people cannot hear your thoughts?</p>
 </div>
