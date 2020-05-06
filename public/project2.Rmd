@@ -1,6 +1,7 @@
 ---
 title: "SDS 348 Project 2"
 output: html_document
+date: "2020-05-06"
 ---
 
 ```{r global_options, include=FALSE}
