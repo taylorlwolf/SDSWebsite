@@ -17,9 +17,18 @@
       <pubDate>Wed, 06 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/2015-07-23-r-rmarkdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars) ## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
+      <description>Python In this blog post, I will demonstrate the ways in which Python and R can be used together. Specifically, this post will make you glad that people cannot hear your thoughts out loud. Ever wish that you could hear other peoples’ thoughts, though? Using the Reticulate package, you can!
+#R code chunk library(reticulate) speech&amp;lt;- &amp;quot;I love your dress&amp;quot; #Python code chunk thought=&amp;quot;(lowkey it&amp;#39;s hideous)!&amp;quot; print(r.speech,thought) ## I love your dress (lowkey it&amp;#39;s hideous)!</description>
+    </item>
+    
+    <item>
+      <title>Python</title>
+      <link>/blog/pythonpost/</link>
+      <pubDate>Wed, 06 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/pythonpost/</guid>
+      <description>Python In this blog post, I will demonstrate the ways in which Python and R can be used together. Specifically, this post will make you glad that people cannot hear your thoughts out loud. Ever wish that you could hear other peoples’ thoughts, though? Using the Reticulate package, you can!
+#R code chunk library(reticulate) speech&amp;lt;- &amp;quot;I love your dress&amp;quot; #Python code chunk thought=&amp;quot;(lowkey it&amp;#39;s hideous)!&amp;quot; print(r.speech,thought) ## I love your dress (lowkey it&amp;#39;s hideous)!</description>
     </item>
     
     <item>

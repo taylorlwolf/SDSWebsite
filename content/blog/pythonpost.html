@@ -1,0 +1,23 @@
+---
+title: "Python"
+author: "Taylor Wolfenberger"
+date: "2020-05-06"
+---
+
+
+
+<div id="python" class="section level1">
+<h1>Python</h1>
+<p>In this blog post, I will demonstrate the ways in which Python and R can be used together. Specifically, this post will make you glad that people cannot hear your thoughts out loud. Ever wish that you could hear other peoples’ thoughts, though? Using the Reticulate package, you can!</p>
+<p><img src="/blog/pythonpost_files/thoughts.png" /></p>
+<pre class="r"><code>#R code chunk
+library(reticulate)
+speech&lt;- &quot;I love your dress&quot;</code></pre>
+<pre class="python"><code>#Python code chunk
+thought=&quot;(lowkey it&#39;s hideous)!&quot;
+print(r.speech,thought)
+## I love your dress (lowkey it&#39;s hideous)!</code></pre>
+<pre class="r"><code>#R code chunk
+cat(c(speech,py$thought))
+## I love your dress (lowkey it&#39;s hideous)!</code></pre>
+</div>

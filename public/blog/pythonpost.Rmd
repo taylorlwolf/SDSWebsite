@@ -12,7 +12,7 @@ knitr::opts_chunk$set(collapse = TRUE)
 
 In this blog post, I will demonstrate the ways in which Python and R can be used together. Specifically, this post will make you glad that people cannot hear your thoughts out loud. Ever wish that you could hear other peoples' thoughts, though? Using the Reticulate package, you can!
 
-![](/static/img/thoughts.png)
+![](/blog/pythonpost_files/thoughts.png)
 
 
 ```{R}
