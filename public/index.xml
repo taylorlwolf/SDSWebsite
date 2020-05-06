@@ -85,7 +85,7 @@ Follow the following steps:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/project1/</guid>
-      <description>Taylor Wolfenberger (tw25848)  Introduction The two datasets I have chosen describe various natality measures and infant mortality rates for two races, namely, black and white. The two datasets converge from the years 1960-2012. The first dataset, ‘BWNatality’, consists of the variables “Year”, “Race”, “Live Births”, “Birth Rate”, and “Fertility Rate”. Fertility rate is defined as the number of births per 1000 women of reproductive age (15-44), and birth rate is the number of live births per 1000 women in the total population per year (without taking particular age groups into account) (Source: 3).</description>
+      <description>Introduction The two datasets I have chosen describe various natality measures and infant mortality rates for two races, namely, black and white. The two datasets converge from the years 1960-2012. The first dataset, ‘BWNatality’, consists of the variables “Year”, “Race”, “Live Births”, “Birth Rate”, and “Fertility Rate”. Fertility rate is defined as the number of births per 1000 women of reproductive age (15-44), and birth rate is the number of live births per 1000 women in the total population per year (without taking particular age groups into account) (Source: 3).</description>
     </item>
     
     <item>
@@ -94,7 +94,7 @@ Follow the following steps:
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/project2/</guid>
-      <description>Taylor Wolfenberger (tw25848)  Introduction For this project, I have chosen to utilize the merged dataset that I created in Project 1. The dataset describes various natality measures and infant mortality rates for two races, namely, black and white. The variables in the dataset include “Year”, “Race”, “Live Births”, “Birth Rate”, “Fertility Rate”, and “Infant Mortality Rate.” The “Year” variable ranges from 1960-2012; these were the years over which the data was collected.</description>
+      <description>Introduction For this project, I have chosen to utilize the merged dataset that I created in Project 1. The dataset describes various natality measures and infant mortality rates for two races, namely, black and white. The variables in the dataset include “Year”, “Race”, “Live Births”, “Birth Rate”, “Fertility Rate”, and “Infant Mortality Rate.” The “Year” variable ranges from 1960-2012; these were the years over which the data was collected.</description>
     </item>
     
   </channel>
