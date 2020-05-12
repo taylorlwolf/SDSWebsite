@@ -52,4 +52,4 @@ cat(c(speech2,py$thought2))
 cat(c(speech3,py$thought3))
 ```
 
-Now, aren't you glad that people cannot hear your thoughts? 
+I don't know about you, but suddenly I'm very glad that others cannot hear my innermost thoughts.
