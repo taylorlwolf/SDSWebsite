@@ -15,6 +15,7 @@ In this post, I will demonstrate the ways in which Python and R can be used comm
 Do you ever wish that you could hear other peoples' thoughts? Whether you are on a first date or interviewing for a job, at times it would prove useful to know what another person is thinking. Using the Reticulate package, this dream can become a reality! In this example, the R text is what you are saying audibly, while Python contains your innermost thoughts.
 
 ![](/blog/pythonpost_files/thoughts.png)
+Photo source: https://three-principles.com/thoughts-even-matter/ 
 
 Suppose you run into an old "frenemy" while out for a brisk walk. This is what you are probably saying out loud...
 ```{R}
