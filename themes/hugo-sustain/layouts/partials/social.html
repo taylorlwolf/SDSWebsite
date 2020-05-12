@@ -11,6 +11,10 @@
     {{ if .Site.Params.Social.Twitter }}
       <li><a href="https://twitter.com/{{ .Site.Params.Social.Twitter }}"><i class="fa fa-twitter"></i></a></li>
     {{ end }}
+    
+     {{ if .Site.Params.Social.Instagram }}
+<li><a href="https://www.instagram.com/{{ .Site.Params.Social.Instagram }}"><i class="fa fa-instagram"></i></a></li>
+    {{ end }}
 
     {{ if .Site.Params.Social.LinkedIn }}
       <li><a href="https://linkedin.com/in/{{ .Site.Params.Social.LinkedIn }}"><i class="fa fa-linkedin"></i></a></li>
