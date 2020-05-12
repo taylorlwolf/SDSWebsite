@@ -1,7 +1,7 @@
 ---
 title: "Using Python and R Together"
 author: "Taylor Wolfenberger"
-date: "2020-05-06"
+date: '2020-05-06'
 ---
 
 ```{r setup, include=FALSE}
@@ -10,28 +10,37 @@ knitr::opts_chunk$set(collapse = TRUE)
 
 # Using Python and R Together
 
-In this blog post, I will demonstrate the ways in which Python and R can be used communicate with each other. 
+In this post, I will demonstrate the ways in which Python and R can be used communicate with each other. More specifically, I will take you on a journey to an alternate dimension in which people speak their thoughts aloud.
 
-Ever wish that you could hear other peoples' thoughts, though? Using the Reticulate package, you can! In this case, the R text is what you are saying audibly, and Python contains your innermost thoughts.
+Do you ever wish that you could hear other peoples' thoughts? Whether you are on a first date or interviewing for a job, at times it would prove useful to know what another person is thinking. Using the Reticulate package, this dream can become a reality! In this example, the R text is what you are saying audibly, while Python contains your innermost thoughts.
 
 ![](/blog/pythonpost_files/thoughts.png)
 
-So, this is what you are probably saying out loud...
+Suppose you run into an old "frenemy" while out for a brisk walk. This is what you are probably saying out loud...
 ```{R}
 #R code chunk
 library(reticulate)
 speech<- "I love your dress!"
 speech2<- "Where did you get it?"
 speech3<- "And your dog is just the cutest!"
+
+#You say...
+speech
+speech2
+speech3
 ```
 
-And this is probably what you're thinking to yourself...
+Despite the outwardly friendly appearance, this is probably what you're truly thinking to yourself...
 ```{python}
 #Python code chunk
 thought="(lowkey it's hideous!)"
-print(thought)
 thought2="(from your grandmother's closet?)"
 thought3="(he looks like a drowned rat.)"
+
+#You're really thinking...
+print(thought)
+print(thought2)
+print(thought3)
 ```
 
 Using Reticulate, you can say your thoughts out loud!

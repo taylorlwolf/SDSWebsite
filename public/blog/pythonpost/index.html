@@ -74,22 +74,36 @@
 
 <div id="using-python-and-r-together" class="section level1">
 <h1>Using Python and R Together</h1>
-<p>In this blog post, I will demonstrate the ways in which Python and R can be used communicate with each other.</p>
-<p>Ever wish that you could hear other peoples’ thoughts, though? Using the Reticulate package, you can! In this case, the R text is what you are saying audibly, and Python contains your innermost thoughts.</p>
+<p>In this post, I will demonstrate the ways in which Python and R can be used communicate with each other. More specifically, I will take you on a journey to an alternate dimension in which people speak their thoughts aloud.</p>
+<p>Do you ever wish that you could hear other peoples’ thoughts? Whether you are on a first date or interviewing for a job, at times it would prove useful to know what another person is thinking. Using the Reticulate package, this dream can become a reality! In this example, the R text is what you are saying audibly, while Python contains your innermost thoughts.</p>
 <p><img src="/blog/pythonpost_files/thoughts.png" /></p>
-<p>So, this is what you are probably saying out loud…</p>
+<p>Suppose you run into an old “frenemy” while out for a brisk walk. This is what you are probably saying out loud…</p>
 <pre class="r"><code>#R code chunk
 library(reticulate)
 speech&lt;- &quot;I love your dress!&quot;
 speech2&lt;- &quot;Where did you get it?&quot;
-speech3&lt;- &quot;And your dog is just the cutest!&quot;</code></pre>
-<p>And this is probably what you’re thinking to yourself…</p>
+speech3&lt;- &quot;And your dog is just the cutest!&quot;
+
+#You say...
+speech
+## [1] &quot;I love your dress!&quot;
+speech2
+## [1] &quot;Where did you get it?&quot;
+speech3
+## [1] &quot;And your dog is just the cutest!&quot;</code></pre>
+<p>Despite the outwardly friendly appearance, this is probably what you’re truly thinking to yourself…</p>
 <pre class="python"><code>#Python code chunk
 thought=&quot;(lowkey it&#39;s hideous!)&quot;
+thought2=&quot;(from your grandmother&#39;s closet?)&quot;
+thought3=&quot;(he looks like a drowned rat.)&quot;
+
+#You&#39;re really thinking...
 print(thought)
 ## (lowkey it&#39;s hideous!)
-thought2=&quot;(from your grandmother&#39;s closet?)&quot;
-thought3=&quot;(he looks like a drowned rat.)&quot;</code></pre>
+print(thought2)
+## (from your grandmother&#39;s closet?)
+print(thought3)
+## (he looks like a drowned rat.)</code></pre>
 <p>Using Reticulate, you can say your thoughts out loud!</p>
 <pre class="r"><code>#R code chunk
 cat(c(speech,py$thought))

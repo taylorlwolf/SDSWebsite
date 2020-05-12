@@ -35,9 +35,8 @@
       <pubDate>Wed, 06 May 2020 00:00:00 +0000</pubDate>
       
       <guid>/blog/pythonpost/</guid>
-      <description>Using Python and R Together In this blog post, I will demonstrate the ways in which Python and R can be used communicate with each other.
-Ever wish that you could hear other peoples’ thoughts, though? Using the Reticulate package, you can! In this case, the R text is what you are saying audibly, and Python contains your innermost thoughts.
-So, this is what you are probably saying out loud…</description>
+      <description>Using Python and R Together In this post, I will demonstrate the ways in which Python and R can be used communicate with each other. More specifically, I will take you on a journey to an alternate dimension in which people speak their thoughts aloud.
+Do you ever wish that you could hear other peoples’ thoughts? Whether you are on a first date or interviewing for a job, at times it would prove useful to know what another person is thinking.</description>
     </item>
     
     <item>
